@@ -1,6 +1,7 @@
 package cz.tul.hombre.regsystem.main;
 
 import cz.tul.hombre.regsystem.database.DatabaseAccessVerticle;
+import cz.tul.hombre.regsystem.list.ListVerticle;
 import cz.tul.hombre.regsystem.registration.RegistrationFormVerticle;
 import io.vertx.core.Vertx;
 
@@ -13,5 +14,6 @@ public class MainVerticle {
         Vertx vertx = Vertx.vertx();
         vertx.deployVerticle(new RegistrationFormVerticle());
         vertx.deployVerticle(new DatabaseAccessVerticle());
+        vertx.deployVerticle(new ListVerticle());
     }
 }

@@ -27,7 +27,7 @@ public class RegistrationFormVerticle extends AbstractVerticle {
         router.route().handler(BodyHandler.create());
 
         router.get("/registration").handler(ctx -> {
-            ctx.put("welcome", "Hello stranger!");
+            ctx.put("welcome", "Registration system");
             engine.render(ctx, TEMPLATES_PATH + REGISTRATION_TEMPLATE, render -> {
                 if (render.succeeded()) {
                     ctx.response().end(render.result());
@@ -40,7 +40,7 @@ public class RegistrationFormVerticle extends AbstractVerticle {
         router.post("/registration-form").handler(ctx -> {
             JsonObject registrationFields = getFormEntries(ctx);
 
-            eventBus.send("database-verticle", registrationFields, reply -> {
+            eventBus.send("database-registrate-verticle", registrationFields, reply -> {
                 String replyMessage;
                 if (reply.succeeded()) {
                     replyMessage = ((JsonObject) reply.result().body()).getString("status");

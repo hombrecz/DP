@@ -1,0 +1,27 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html>
+<head>
+    <title>RegSystem - registration page</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<h1>Players list</h1>
+<table>
+    <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Surname</th>
+        <th>Nickname</th>
+    </tr>
+    <tr th:each="player,iterationStatus  : ${players}">
+        <td th:text="${iterationStatus.count}">1</td>
+        <td th:text="${player.name}">Name</td>
+        <td th:text="${player.surname}">Surname</td>
+        <td th:text="${player.nickname}">Nickname</td>
+    </tr>
+</table>
+
+</form>
+</body>
+</html>
