@@ -7,7 +7,6 @@ import com.datastax.driver.core.ResultSetFuture;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.core.querybuilder.Select;
 import com.datastax.driver.core.utils.UUIDs;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.EventBus;
@@ -54,33 +53,33 @@ public class DatabaseAccessVerticle extends AbstractVerticle {
             }
         });
 
-        eventBus.publisher("database-list-verticle", message -> {
-            String[] columns = {"name", "surname", "nickname"};
-            Select query = QueryBuilder.select(columns).from("test", "registrations");
-
-            cluster = Cluster.builder()
-                    .addContactPoint("127.0.0.1")
-                    .withPort(9042)
-                    .withAuthProvider(new PlainTextAuthProvider("cassandra", "cassandra"))
-                    .build();
-
-            Session session = cluster.connect("test");
-            ResultSetFuture future = session.executeAsync(query);
-
-            try {
-                ResultSet rs = future.get();
-
-                JsonObject replyMessage = new JsonObject();
-                replyMessage.put("status", "Registration data delivered and saved to Cassandra");
-                replyMessage.put("players", rs.all());
-
-                message
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-        });
+//        eventBus.publisher("database-list-verticle", message -> {
+//            String[] columns = {"name", "surname", "nickname"};
+//            Select query = QueryBuilder.select(columns).from("test", "registrations");
+//
+//            cluster = Cluster.builder()
+//                    .addContactPoint("127.0.0.1")
+//                    .withPort(9042)
+//                    .withAuthProvider(new PlainTextAuthProvider("cassandra", "cassandra"))
+//                    .build();
+//
+//            Session session = cluster.connect("test");
+//            ResultSetFuture future = session.executeAsync(query);
+//
+//            try {
+//                ResultSet rs = future.get();
+//
+//                JsonObject replyMessage = new JsonObject();
+//                replyMessage.put("status", "Registration data delivered and saved to Cassandra");
+//                replyMessage.put("players", rs.all());
+//
+//                message
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            } catch (ExecutionException e) {
+//                e.printStackTrace();
+//            }
+//        });
     }
 
     private Insert getInsertQuery(Message<Object> message) {

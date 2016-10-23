@@ -4,6 +4,6 @@ thesis/*.gz
 thesis/*.toc
 
 *.iml
-regsystem/.idea
-regsystem/.vertx
-regsystem/target
+.idea
+.vertx
+target

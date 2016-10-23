@@ -23,20 +23,20 @@ public class ListVerticle extends AbstractVerticle{
 
         router.route().handler(BodyHandler.create());
 
-        router.get("/list").handler(ctx -> {
-            eventBus.send("database-list-verticle", "", reply -> {
-                if (reply.succeeded()) {
-                    reply.result().
-                    ctx.put("players", "Registration system");
-                    engine.render(ctx, TEMPLATES_PATH + REGISTRATION_TEMPLATE, render -> {
-                        if (render.succeeded()) {
-                            ctx.response().end(render.result());
-                        } else {
-                            ctx.fail(render.cause());
-                        }
-                    });
-                }
-            });
-        });
+//        router.get("/list").handler(ctx -> {
+//            eventBus.send("database-list-verticle", "", reply -> {
+//                if (reply.succeeded()) {
+//                    reply.result().
+//                    ctx.put("players", "Registration system");
+//                    engine.render(ctx, TEMPLATES_PATH + REGISTRATION_TEMPLATE, render -> {
+//                        if (render.succeeded()) {
+//                            ctx.response().end(render.result());
+//                        } else {
+//                            ctx.fail(render.cause());
+//                        }
+//                    });
+//                }
+//            });
+//        });
     }
 }
