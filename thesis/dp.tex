@@ -78,11 +78,11 @@ Který bude cca 1 strana spíše motivačně informačního charakteru, proč js
 \section{Reaktivní proudy}
 Problém, na který odpovídají
 
-Jak fungují a co potřebují
+Jak fungují a co potřebují, stavový automat
 
-Implementace - scope a aktuálně realizované
+Implementace - scope a aktuálně realizované, VertX vs Ratpack vs Lagom
 
-Jak vypadá interface v Javě
+Jak vypadá interface v Javě, protokol, který je nutné implementovat
 
 \chapter{Implementace a nástroje}
 
@@ -93,6 +93,22 @@ Jak vypadá interface v Javě
 \section{VertX}
 
 \section{Cassandra}
+
+\subsection{Architektura}
+
+node, datacenter cluster, gossip protokol, commit  log, SSTable, CQL Table
+
+\subsection{Replikace}
+
+virtual nodes, partitioner, replication strategy, snitch
+
+\subsection{Vnitřní uspořádání}
+
+storage engine - read before write, sequential write (write amplification), update, delete, sloupcová, klíče
+
+read a write v Cassandra, compaction a delete
+
+konsistence
 
 \section{Docker}
 
