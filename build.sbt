@@ -3,8 +3,6 @@ organization in ThisBuild := "regsystem.dp"
 // the Scala version that will be used for cross-compiled libraries
 scalaVersion in ThisBuild := "2.11.7"
 
-lagomCassandraCleanOnStart in ThisBuild := true
-
 lazy val userApi = project("user-api")
   .settings(
     version := "1.0-SNAPSHOT",
@@ -67,5 +65,9 @@ lazy val eclipseSettings = Seq(
   unmanagedSourceDirectories in Compile := Seq((javaSource in Compile).value),
   unmanagedSourceDirectories in Test := Seq((javaSource in Test).value)
 )
+
+lagomCassandraCleanOnStart in ThisBuild := true
+lagomCassandraEnabled in ThisBuild := true
+lagomCassandraPort in ThisBuild := 9042
 
 fork in run := true

@@ -3,7 +3,7 @@ package regsystem.user.impl;
 import com.lightbend.lagom.javadsl.api.ServiceCall;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntityRef;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntityRegistry;
-import com.lightbend.lagom.javadsl.persistence.cassandra.CassandraReadSide;
+import com.lightbend.lagom.javadsl.persistence.ReadSide;
 import com.lightbend.lagom.javadsl.persistence.cassandra.CassandraSession;
 
 import org.pcollections.PSequence;
@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
 
     @Inject
     public UserServiceImpl(PersistentEntityRegistry persistentEntityRegistry,
-                           CassandraReadSide readSide, CassandraSession db) {
+                           ReadSide readSide, CassandraSession db) {
         this.persistentEntityRegistry = persistentEntityRegistry;
         this.db = db;
         persistentEntityRegistry.register(UserEntity.class);

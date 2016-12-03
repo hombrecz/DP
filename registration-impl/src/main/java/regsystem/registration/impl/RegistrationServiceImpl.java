@@ -3,6 +3,7 @@ package regsystem.registration.impl;
 import com.lightbend.lagom.javadsl.api.ServiceCall;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntityRef;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntityRegistry;
+import com.lightbend.lagom.javadsl.persistence.ReadSide;
 import com.lightbend.lagom.javadsl.persistence.cassandra.CassandraSession;
 
 import org.pcollections.PSequence;
@@ -20,10 +21,10 @@ import javax.inject.Inject;
 import akka.Done;
 import akka.NotUsed;
 import regsystem.registration.api.Group;
-import regsystem.user.api.User;
-import regsystem.user.api.UserService;
 import regsystem.registration.api.RegistrationService;
 import regsystem.registration.api.RegistrationTicket;
+import regsystem.user.api.User;
+import regsystem.user.api.UserService;
 
 /**
  * @author ondrej.dlabola(at)morosystems.cz
@@ -36,12 +37,13 @@ public class RegistrationServiceImpl implements RegistrationService {
     private final Logger log = LoggerFactory.getLogger(RegistrationServiceImpl.class);
 
     @Inject
-    public RegistrationServiceImpl(PersistentEntityRegistry persistentEntityRegistry,
+    public RegistrationServiceImpl(PersistentEntityRegistry persistentEntityRegistry, ReadSide readSide,
                                    UserService userService, CassandraSession db) {
         this.persistentEntityRegistry = persistentEntityRegistry;
         this.userService = userService;
         this.db = db;
         persistentEntityRegistry.register(GroupEntity.class);
+        readSide.register(RegistrationEventProcessor.class);
     }
 
     @Override
