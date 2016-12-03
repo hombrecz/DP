@@ -52,22 +52,6 @@ lazy val jacksonParameterNamesJavacSettings = Seq(
   javacOptions in compile += "-parameters"
 )
 
-// Configuration of sbteclipse
-// Needed for importing the project into Eclipse
-lazy val eclipseSettings = Seq(
-  EclipseKeys.projectFlavor := EclipseProjectFlavor.Java,
-  EclipseKeys.withBundledScalaContainers := false,
-  EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
-  EclipseKeys.eclipseOutput := Some(".target"),
-  EclipseKeys.withSource := true,
-  EclipseKeys.withJavadoc := true,
-  // avoid some scala specific source directories
-  unmanagedSourceDirectories in Compile := Seq((javaSource in Compile).value),
-  unmanagedSourceDirectories in Test := Seq((javaSource in Test).value)
-)
-
 lagomCassandraCleanOnStart in ThisBuild := true
-lagomCassandraEnabled in ThisBuild := true
-lagomCassandraPort in ThisBuild := 9042
 
 fork in run := true
