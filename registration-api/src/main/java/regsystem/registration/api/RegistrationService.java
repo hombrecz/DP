@@ -19,7 +19,7 @@ import static com.lightbend.lagom.javadsl.api.Service.restCall;
 public interface RegistrationService extends Service {
 
     ServiceCall<RegistrationTicket, Done> registerUser();
-    ServiceCall<Group, Done> createGroup();
+    ServiceCall<Group, NotUsed> createGroup();
 
     ServiceCall<NotUsed, PSequence<Group>> getGroups();
 

@@ -65,12 +65,10 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
     }
 
     private CompletionStage<Done> prepareCreateTables() {
-        // @formatter:off
         return session.executeCreateTable(
-            "CREATE TABLE IF NOT EXISTS group ("
-                    + "groupId text, groupName text, capacity int,"
-                    + "PRIMARY KEY (groupId))");
-        // @formatter:on
+                "CREATE TABLE IF NOT EXISTS group ("
+                        + "groupId text, groupName text, capacity int,"
+                        + "PRIMARY KEY (groupId))");
     }
 
     private CompletionStage<Done> prepareWriteGroup() {

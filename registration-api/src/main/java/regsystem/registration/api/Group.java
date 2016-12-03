@@ -14,7 +14,7 @@ import jdk.nashorn.internal.ir.annotations.Immutable;
  */
 @Immutable
 @JsonDeserialize
-public class Group {
+public final class Group {
 
     public final String groupId;
 
@@ -41,10 +41,11 @@ public class Group {
 
     @Override
     public int hashCode() {
-        int result = groupId != null ? groupId.hashCode() : 0;
-        result = 31 * result + (groupName != null ? groupName.hashCode() : 0);
-        result = 31 * result + (capacity != null ? capacity.hashCode() : 0);
-        return result;
+        int h = 31;
+        h = h * 17 + groupId.hashCode();
+        h = h * 17 + groupName.hashCode();
+        h = h * 17 + capacity.hashCode();
+        return h;
     }
 
     @Override

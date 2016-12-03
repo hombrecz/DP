@@ -57,12 +57,11 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public ServiceCall<Group, Done> createGroup() {
+    public ServiceCall<Group, NotUsed> createGroup() {
         return request -> {
             log.info("Group: {}.", request.groupName);
-            PersistentEntityRef<RegistrationCommand> ref =
-                    persistentEntityRegistry.refFor(GroupEntity.class, request.groupId);
-            return ref.ask(new RegistrationCommand.CreateGroup(request));
+            return groupEntityRef(request.groupId).ask(new RegistrationCommand.CreateGroup(request))
+                    .thenApply(ack -> NotUsed.getInstance());
         };
     }
 
@@ -77,6 +76,11 @@ public class RegistrationServiceImpl implements RegistrationService {
             });
             return result;
         };
+    }
+
+    private PersistentEntityRef<RegistrationCommand> groupEntityRef(String groupId) {
+        PersistentEntityRef<RegistrationCommand> ref = persistentEntityRegistry.refFor(GroupEntity.class, groupId);
+        return ref;
     }
 
 }

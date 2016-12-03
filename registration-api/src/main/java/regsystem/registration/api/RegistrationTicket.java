@@ -14,7 +14,7 @@ import jdk.nashorn.internal.ir.annotations.Immutable;
  */
 @Immutable
 @JsonDeserialize
-public class RegistrationTicket {
+public final class RegistrationTicket {
 
     public final String registrationId;
 

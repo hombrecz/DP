@@ -14,7 +14,7 @@ import javax.annotation.concurrent.Immutable;
 
 @Immutable
 @JsonDeserialize
-public class User {
+public final class User {
 
     public final String userId;
 
@@ -43,10 +43,11 @@ public class User {
 
     @Override
     public int hashCode() {
-        int result = userId != null ? userId.hashCode() : 0;
-        result = 31 * result + (groupId != null ? groupId.hashCode() : 0);
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        return result;
+        int h = 31;
+        h = h * 17 + userId.hashCode();
+        h = h * 17 + name.hashCode();
+        h = h * 17 + groupId.hashCode();
+        return h;
     }
 
     @Override

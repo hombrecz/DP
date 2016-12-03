@@ -58,12 +58,10 @@ public class UserEventProcessor extends ReadSideProcessor<UserEvent> {
     }
 
     private CompletionStage<Done> prepareCreateTables() {
-        // @formatter:off
         return session.executeCreateTable(
-            "CREATE TABLE IF NOT EXISTS user ("
-                            + "userId text, groupId text, name text,"
-                            + "PRIMARY KEY (userId))");
-        // @formatter:on
+                "CREATE TABLE IF NOT EXISTS user ("
+                        + "userId text, groupId text, name text,"
+                        + "PRIMARY KEY (userId))");
     }
 
     private CompletionStage<Done> prepareWriteUser() {

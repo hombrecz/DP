@@ -44,9 +44,9 @@ public class UserServiceImpl implements UserService {
     public ServiceCall<User, Done> createUser() {
         return (request) -> {
             log.info("User: {}.", request.name);
-            PersistentEntityRef<UserCommand> ref =
-                    persistentEntityRegistry.refFor(UserEntity.class, request.userId);
-            return ref.ask(new UserCommand.CreateUser(request));
+
+            return userEntityRef(request.userId).ask(new UserCommand.CreateUser(request))
+                .thenApply(ack -> Done.getInstance());
         };
     }
 
@@ -62,5 +62,10 @@ public class UserServiceImpl implements UserService {
 
             return result;
         };
+    }
+
+    private PersistentEntityRef<UserCommand> userEntityRef(String userId) {
+        PersistentEntityRef<UserCommand> ref = persistentEntityRegistry.refFor(UserEntity.class, userId);
+        return ref;
     }
 }
