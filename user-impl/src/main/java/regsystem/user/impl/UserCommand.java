@@ -1,4 +1,4 @@
-package regsystem.player.impl;
+package regsystem.user.impl;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
@@ -13,45 +13,45 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import akka.Done;
-import regsystem.player.api.Player;
+import regsystem.user.api.User;
 
 /**
  * @author ondrej.dlabola(at)morosystems.cz
  */
-public interface PlayerCommand extends Jsonable {
+public interface UserCommand extends Jsonable {
 
     @SuppressWarnings("serial")
     @Immutable
     @JsonDeserialize
-    public final class CreatePlayer implements PlayerCommand, CompressedJsonable, PersistentEntity.ReplyType<Done> {
-        public final Player player;
+    public final class CreateUser implements UserCommand, CompressedJsonable, PersistentEntity.ReplyType<Done> {
+        public final User user;
 
         @JsonCreator
-        public CreatePlayer(Player player) {
-            this.player = Preconditions.checkNotNull(player, "player is null");
+        public CreateUser(User user) {
+            this.user = Preconditions.checkNotNull(user, "user is null");
         }
 
         @Override
         public boolean equals(@Nullable Object another) {
             if (this == another)
                 return true;
-            return another instanceof CreatePlayer && equalTo((CreatePlayer) another);
+            return another instanceof CreateUser && equalTo((CreateUser) another);
         }
 
-        private boolean equalTo(CreatePlayer another) {
-            return player.equals(another.player);
+        private boolean equalTo(CreateUser another) {
+            return user.equals(another.user);
         }
 
         @Override
         public int hashCode() {
             int h = 31;
-            h = h * 17 + player.hashCode();
+            h = h * 17 + user.hashCode();
             return h;
         }
 
         @Override
         public String toString() {
-            return MoreObjects.toStringHelper("CreatePlayer").add("player", player).toString();
+            return MoreObjects.toStringHelper("CreateUser").add("user", user).toString();
         }
     }
 

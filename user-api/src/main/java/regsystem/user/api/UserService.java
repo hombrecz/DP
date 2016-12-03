@@ -1,4 +1,4 @@
-package regsystem.player.api;
+package regsystem.user.api;
 
 import com.lightbend.lagom.javadsl.api.Descriptor;
 import com.lightbend.lagom.javadsl.api.Service;
@@ -17,17 +17,17 @@ import static com.lightbend.lagom.javadsl.api.Service.restCall;
 /**
  * @author ondrej.dlabola(at)morosystems.cz
  */
-public interface PlayerService extends Service {
+public interface UserService extends Service {
 
-    ServiceCall<Player, Done> createPlayer();
+    ServiceCall<User, Done> createUser();
 
-    ServiceCall<NotUsed, PSequence<Player>> getPlayers();
+    ServiceCall<NotUsed, PSequence<User>> getUsers();
 
     @Override
     default Descriptor descriptor() {
-        return named("playerService").withCalls(
-                namedCall("/api/players/", this::createPlayer),
-                restCall(Method.GET, "/api/players/all", this::getPlayers)
+        return named("userService").withCalls(
+                namedCall("/api/userss/", this::createUser),
+                restCall(Method.GET, "/api/users/all", this::getUsers)
         ).withAutoAcl(true);
     }
 }

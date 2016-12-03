@@ -1,4 +1,4 @@
-package regsystem.player.impl;
+package regsystem.user.impl;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.PreparedStatement;
@@ -20,15 +20,15 @@ import akka.Done;
 /**
  * @author ondrej.dlabola(at)morosystems.cz
  */
-public class PlayerEventProcessor extends CassandraReadSideProcessor<PlayerEvent> {
+public class UserEventProcessor extends CassandraReadSideProcessor<UserEvent> {
 
-    private final Logger log = LoggerFactory.getLogger(PlayerEventProcessor.class);
+    private final Logger log = LoggerFactory.getLogger(UserEventProcessor.class);
 
-    private PreparedStatement writePlayer = null;
+    private PreparedStatement writeUser = null;
     private PreparedStatement writeOffset = null;
 
-    private void setWritePlayer(PreparedStatement writePlayer) {
-        this.writePlayer = writePlayer;
+    private void setWriteUser(PreparedStatement writeUser) {
+        this.writeUser = writeUser;
     }
 
     private void setWriteOffset(PreparedStatement writeOffset) {
@@ -36,63 +36,63 @@ public class PlayerEventProcessor extends CassandraReadSideProcessor<PlayerEvent
     }
 
     @Override
-    public AggregateEventTag<PlayerEvent> aggregateTag() {
-        return PlayerEventTag.INSTANCE;
+    public AggregateEventTag<UserEvent> aggregateTag() {
+        return UserEventTag.INSTANCE;
     }
 
     @Override
     public CompletionStage<Optional<UUID>> prepare(CassandraSession session) {
         return
                 prepareCreateTables(session).thenCompose(a ->
-                        prepareWritePlayer(session).thenCompose(b ->
+                        prepareWriteUser(session).thenCompose(b ->
                                 prepareWriteOffset(session).thenCompose(c ->
                                         selectOffset(session))));
     }
 
     private CompletionStage<Done> prepareCreateTables(CassandraSession session) {
         return session.executeCreateTable(
-                "CREATE TABLE IF NOT EXISTS player ("
-                        + "playerId text, teamId text, name text,"
-                        + "PRIMARY KEY (playerId))")
+                "CREATE TABLE IF NOT EXISTS user ("
+                        + "userId text, teamId text, name text,"
+                        + "PRIMARY KEY (userId))")
                 .thenCompose(a -> session.executeCreateTable(
-                        "CREATE TABLE IF NOT EXISTS player_offset ("
+                        "CREATE TABLE IF NOT EXISTS user_offset ("
                                 + "partition int, offset timeuuid, "
                                 + "PRIMARY KEY (partition))"));
     }
 
-    private CompletionStage<Done> prepareWritePlayer(CassandraSession session) {
-        return session.prepare("INSERT INTO player (playerId, teamId, name) VALUES (?, ?, ?)").thenApply(ps -> {
-            setWritePlayer(ps);
+    private CompletionStage<Done> prepareWriteUser(CassandraSession session) {
+        return session.prepare("INSERT INTO user (userId, teamId, name) VALUES (?, ?, ?)").thenApply(ps -> {
+            setWriteUser(ps);
             return Done.getInstance();
         });
     }
 
     private CompletionStage<Done> prepareWriteOffset(CassandraSession session) {
-        return session.prepare("INSERT INTO player_offset (partition, offset) VALUES (1, ?)").thenApply(ps -> {
+        return session.prepare("INSERT INTO user_offset (partition, offset) VALUES (1, ?)").thenApply(ps -> {
             setWriteOffset(ps);
             return Done.getInstance();
         });
     }
 
     private CompletionStage<Optional<UUID>> selectOffset(CassandraSession session) {
-        return session.selectOne("SELECT offset FROM player_offset")
+        return session.selectOne("SELECT offset FROM user_offset")
                 .thenApply(
                         optionalRow -> optionalRow.map(r -> r.getUUID("offset")));
     }
 
     @Override
     public EventHandlers defineEventHandlers(EventHandlersBuilder builder) {
-        builder.setEventHandler(PlayerEvent.PlayerCreated.class, this::processPlayerCreated);
+        builder.setEventHandler(UserEvent.UserCreated.class, this::processUserCreated);
         return builder.build();
     }
 
-    private CompletionStage<List<BoundStatement>> processPlayerCreated(PlayerEvent.PlayerCreated event, UUID offset) {
-        BoundStatement bindCreatePlayer = writePlayer.bind();
-        bindCreatePlayer.setString("playerId", event.playerId);
-        bindCreatePlayer.setString("teamId", event.teamId);
-        bindCreatePlayer.setString("name", event.name);
+    private CompletionStage<List<BoundStatement>> processUserCreated(UserEvent.UserCreated event, UUID offset) {
+        BoundStatement bindCreateUser = writeUser.bind();
+        bindCreateUser.setString("userId", event.userId);
+        bindCreateUser.setString("teamId", event.teamId);
+        bindCreateUser.setString("name", event.name);
         BoundStatement bindWriteOffset = writeOffset.bind(offset);
-        log.info("Persisted player {}", event.name);
-        return completedStatements(Arrays.asList(bindCreatePlayer, bindWriteOffset));
+        log.info("Persisted user {}", event.name);
+        return completedStatements(Arrays.asList(bindCreateUser, bindWriteOffset));
     }
 }

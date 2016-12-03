@@ -1,4 +1,4 @@
-package regsystem.player.impl;
+package regsystem.user.impl;
 
 import com.google.common.base.Preconditions;
 
@@ -10,7 +10,7 @@ import java.util.Optional;
 
 import javax.annotation.concurrent.Immutable;
 
-import regsystem.player.api.Player;
+import regsystem.user.api.User;
 
 /**
  * @author ondrej.dlabola(at)morosystems.cz
@@ -18,13 +18,13 @@ import regsystem.player.api.Player;
 @SuppressWarnings("serial")
 @Immutable
 @JsonDeserialize
-public final class PlayerState implements CompressedJsonable {
+public final class UserState implements CompressedJsonable {
 
-    public final Optional<Player> player;
+    public final Optional<User> user;
 
     @JsonCreator
-    public PlayerState(Optional<Player> player) {
-        this.player = Preconditions.checkNotNull(player, "player is null");
+    public UserState(Optional<User> user) {
+        this.user = Preconditions.checkNotNull(user, "user is null");
     }
 
 }

@@ -12,7 +12,7 @@ import com.lightbend.lagom.serialization.Jsonable;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
-import regsystem.player.api.Player;
+import regsystem.user.api.User;
 import regsystem.registration.api.Team;
 
 /**
@@ -75,14 +75,14 @@ public interface RegistrationEvent extends Jsonable, AggregateEvent<Registration
     @Immutable
     @JsonDeserialize
     public final class PlayerRegistered implements RegistrationEvent {
-        public final Player player;
+        public final User user;
 
         public final Team team;
 
         @JsonCreator
-        public PlayerRegistered(Player player, Team team) {
+        public PlayerRegistered(User user, Team team) {
 
-            this.player = Preconditions.checkNotNull(player, "player is null");
+            this.user = Preconditions.checkNotNull(user, "user is null");
             this.team = Preconditions.checkNotNull(team, "team is null");
         }
 
@@ -94,13 +94,13 @@ public interface RegistrationEvent extends Jsonable, AggregateEvent<Registration
         }
 
         private boolean equalTo(PlayerRegistered another) {
-            return player.equals(another.player) && team.equals(another.team);
+            return user.equals(another.user) && team.equals(another.team);
         }
 
         @Override
         public int hashCode() {
             int h = 31;
-            h = h * 17 + player.hashCode();
+            h = h * 17 + user.hashCode();
             h = h * 17 + team.hashCode();
             return h;
         }
@@ -108,7 +108,7 @@ public interface RegistrationEvent extends Jsonable, AggregateEvent<Registration
         @Override
         public String toString() {
             return MoreObjects.toStringHelper("PlayerRegistered")
-                    .add("player", player)
+                    .add("user", user)
                     .add("team", team)
                     .toString();
         }

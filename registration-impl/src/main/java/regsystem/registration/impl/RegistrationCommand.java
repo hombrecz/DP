@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import akka.Done;
-import regsystem.player.api.Player;
+import regsystem.user.api.User;
 import regsystem.registration.api.Team;
 
 /**
@@ -61,11 +61,11 @@ public interface RegistrationCommand extends Jsonable {
     @JsonDeserialize
     public final class RegisterPlayer implements RegistrationCommand, CompressedJsonable, PersistentEntity.ReplyType<Done> {
 
-        public final Player player;
+        public final User user;
 
         @JsonCreator
-        public RegisterPlayer(Player player) {
-            this.player = Preconditions.checkNotNull(player, "player is null");
+        public RegisterPlayer(User user) {
+            this.user = Preconditions.checkNotNull(user, "user is null");
         }
 
         @Override
@@ -76,20 +76,20 @@ public interface RegistrationCommand extends Jsonable {
         }
 
         private boolean equalTo(RegisterPlayer another) {
-            return player.equals(another.player);
+            return user.equals(another.user);
         }
 
         @Override
         public int hashCode() {
             int h = 31;
-            h = h * 17 + player.hashCode();
+            h = h * 17 + user.hashCode();
             return h;
         }
 
         @Override
         public String toString() {
             return MoreObjects.toStringHelper("RegisterPlayer")
-                    .add("player", player)
+                    .add("user", user)
                     .toString();
         }
     }

@@ -13,7 +13,7 @@ Registration system like microservices application build on Lightbend Lagom fram
 + POST /api/teams
 + BODY `{"teamId":"alpha2", "teamName":"Alpha-2", "capacity":"30"}`
 
-### register player
+### register user
 
 `curl 'http://localhost:9000/api/registration' -X POST -d '{"registrationId":"whatever", "teamId":"alpha1", "name":"John"}' -H 'Content-Type: application/json'`
 + POST /api/registration

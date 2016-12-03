@@ -4,7 +4,7 @@ import com.lightbend.lagom.javadsl.persistence.PersistentEntity;
 
 import java.util.Optional;
 
-import regsystem.player.api.Player;
+import regsystem.user.api.User;
 import regsystem.registration.api.Team;
 
 /**
@@ -38,7 +38,7 @@ public class TeamEntity extends PersistentEntity<RegistrationCommand, Registrati
                     if (state().team.isPresent()) {
                         if (state().team.get().capacity > 0) {
                             RegistrationEvent.PlayerRegistered event = new RegistrationEvent.PlayerRegistered(
-                                    new Player(cmd.player.playerId, state().team.get().teamId, cmd.player.name), state().team.get());
+                                    new User(cmd.user.userId, state().team.get().teamId, cmd.user.name), state().team.get());
                             return ctx.thenPersist(event);
                         } else {
                             ctx.invalidCommand("Capacity of team " + entityId() + " is full");

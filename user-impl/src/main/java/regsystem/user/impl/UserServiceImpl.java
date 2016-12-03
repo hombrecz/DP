@@ -1,4 +1,4 @@
-package regsystem.player.impl;
+package regsystem.user.impl;
 
 import com.lightbend.lagom.javadsl.api.ServiceCall;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntityRef;
@@ -19,43 +19,43 @@ import javax.inject.Inject;
 
 import akka.Done;
 import akka.NotUsed;
-import regsystem.player.api.Player;
-import regsystem.player.api.PlayerService;
+import regsystem.user.api.User;
+import regsystem.user.api.UserService;
 
 /**
  * @author ondrej.dlabola(at)morosystems.cz
  */
-public class PlayerServiceImpl implements PlayerService {
+public class UserServiceImpl implements UserService {
 
     private final PersistentEntityRegistry persistentEntityRegistry;
     private final CassandraSession db;
-    private final Logger log = LoggerFactory.getLogger(PlayerServiceImpl.class);
+    private final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Inject
-    public PlayerServiceImpl(PersistentEntityRegistry persistentEntityRegistry,
-                             CassandraReadSide readSide, CassandraSession db) {
+    public UserServiceImpl(PersistentEntityRegistry persistentEntityRegistry,
+                           CassandraReadSide readSide, CassandraSession db) {
         this.persistentEntityRegistry = persistentEntityRegistry;
         this.db = db;
-        persistentEntityRegistry.register(PlayerEntity.class);
-        readSide.register(PlayerEventProcessor.class);
+        persistentEntityRegistry.register(UserEntity.class);
+        readSide.register(UserEventProcessor.class);
     }
 
     @Override
-    public ServiceCall<Player, Done> createPlayer() {
+    public ServiceCall<User, Done> createUser() {
         return (request) -> {
-            log.info("Player: {}.", request.name);
-            PersistentEntityRef<PlayerCommand> ref =
-                    persistentEntityRegistry.refFor(PlayerEntity.class, request.playerId);
-            return ref.ask(new PlayerCommand.CreatePlayer(request));
+            log.info("User: {}.", request.name);
+            PersistentEntityRef<UserCommand> ref =
+                    persistentEntityRegistry.refFor(UserEntity.class, request.userId);
+            return ref.ask(new UserCommand.CreateUser(request));
         };
     }
 
     @Override
-    public ServiceCall<NotUsed, PSequence<Player>> getPlayers() {
+    public ServiceCall<NotUsed, PSequence<User>> getUsers() {
         return (req) -> {
-            CompletionStage<PSequence<Player>> result
-                    = db.selectAll("SELECT * FROM player").thenApply(rows -> {
-                List<Player> list = rows.stream().map(r -> new Player(r.getString("playerId"),
+            CompletionStage<PSequence<User>> result
+                    = db.selectAll("SELECT * FROM user").thenApply(rows -> {
+                List<User> list = rows.stream().map(r -> new User(r.getString("userId"),
                         r.getString("teamId"), r.getString("name"))).collect(Collectors.toList());
                 return TreePVector.from(list);
             });

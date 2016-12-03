@@ -1,4 +1,4 @@
-package regsystem.player.api;
+package regsystem.user.api;
 
 /**
  * @author ondrej.dlabola(at)morosystems.cz
@@ -14,16 +14,16 @@ import javax.annotation.concurrent.Immutable;
 
 @Immutable
 @JsonDeserialize
-public class Player {
+public class User {
 
-    public final String playerId;
+    public final String userId;
 
     public final String teamId;
 
     public final String name;
 
-    public Player(String playerId, String teamId, String name) {
-        this.playerId = Preconditions.checkNotNull(playerId, "playerId is null");
+    public User(String userId, String teamId, String name) {
+        this.userId = Preconditions.checkNotNull(userId, "userId is null");
         this.teamId = Preconditions.checkNotNull(teamId, "teamId is null");
         this.name = Preconditions.checkNotNull(name, "name is null");
     }
@@ -32,18 +32,18 @@ public class Player {
     public boolean equals(@Nullable Object another) {
         if (this == another)
             return true;
-        return another instanceof Player && equalTo((Player) another);
+        return another instanceof User && equalTo((User) another);
     }
 
-    private boolean equalTo(Player another) {
-        return playerId.equals(another.playerId)
+    private boolean equalTo(User another) {
+        return userId.equals(another.userId)
                 && teamId.equals(another.teamId)
                 && name.equals(another.name);
     }
 
     @Override
     public int hashCode() {
-        int result = playerId != null ? playerId.hashCode() : 0;
+        int result = userId != null ? userId.hashCode() : 0;
         result = 31 * result + (teamId != null ? teamId.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
@@ -51,8 +51,8 @@ public class Player {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper("Player")
-                .add("playerId", playerId)
+        return MoreObjects.toStringHelper("User")
+                .add("userId", userId)
                 .add("teamId", teamId)
                 .add("name", name)
                 .toString();

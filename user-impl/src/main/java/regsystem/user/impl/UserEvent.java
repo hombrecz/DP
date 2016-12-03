@@ -1,4 +1,4 @@
-package regsystem.player.impl;
+package regsystem.user.impl;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
@@ -15,24 +15,24 @@ import javax.annotation.concurrent.Immutable;
 /**
  * @author ondrej.dlabola(at)morosystems.cz
  */
-public interface PlayerEvent extends Jsonable, AggregateEvent<PlayerEvent> {
+public interface UserEvent extends Jsonable, AggregateEvent<UserEvent> {
 
     @Override
-    default public AggregateEventTag<PlayerEvent> aggregateTag() {
-        return PlayerEventTag.INSTANCE;
+    default public AggregateEventTag<UserEvent> aggregateTag() {
+        return UserEventTag.INSTANCE;
     }
 
     @SuppressWarnings("serial")
     @Immutable
     @JsonDeserialize
-    public class PlayerCreated implements PlayerEvent {
-        public final String playerId;
+    public class UserCreated implements UserEvent {
+        public final String userId;
         public final String teamId;
         public final String name;
 
         @JsonCreator
-        public PlayerCreated(String playerId, String teamId, String name) {
-            this.playerId = Preconditions.checkNotNull(playerId, "playerId is null");
+        public UserCreated(String userId, String teamId, String name) {
+            this.userId = Preconditions.checkNotNull(userId, "userId is null");
             this.teamId = Preconditions.checkNotNull(teamId, "teamId is null");
             this.name = Preconditions.checkNotNull(name, "name is null");
         }
@@ -41,11 +41,11 @@ public interface PlayerEvent extends Jsonable, AggregateEvent<PlayerEvent> {
         public boolean equals(@Nullable Object another) {
             if (this == another)
                 return true;
-            return another instanceof PlayerCreated && equalTo((PlayerCreated) another);
+            return another instanceof UserCreated && equalTo((UserCreated) another);
         }
 
-        private boolean equalTo(PlayerCreated another) {
-            return playerId.equals(another.playerId)
+        private boolean equalTo(UserCreated another) {
+            return userId.equals(another.userId)
                     && teamId.equals(another.teamId)
                     && name.equals(another.name);
         }
@@ -53,7 +53,7 @@ public interface PlayerEvent extends Jsonable, AggregateEvent<PlayerEvent> {
         @Override
         public int hashCode() {
             int h = 31;
-            h = h * 17 + playerId.hashCode();
+            h = h * 17 + userId.hashCode();
             h = h * 17 + teamId.hashCode();
             h = h * 17 + name.hashCode();
             return h;
@@ -61,8 +61,8 @@ public interface PlayerEvent extends Jsonable, AggregateEvent<PlayerEvent> {
 
         @Override
         public String toString() {
-            return MoreObjects.toStringHelper("PlayerCreated")
-                    .add("playerId", playerId)
+            return MoreObjects.toStringHelper("UserCreated")
+                    .add("userId", userId)
                     .add("teamId", teamId)
                     .add("name", name)
                     .toString();

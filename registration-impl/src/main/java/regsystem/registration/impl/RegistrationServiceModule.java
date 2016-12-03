@@ -4,7 +4,7 @@ import com.google.inject.AbstractModule;
 
 import com.lightbend.lagom.javadsl.server.ServiceGuiceSupport;
 
-import regsystem.player.api.PlayerService;
+import regsystem.user.api.UserService;
 import regsystem.registration.api.RegistrationService;
 
 /**
@@ -14,7 +14,7 @@ public class RegistrationServiceModule extends AbstractModule implements Service
     @Override
     protected void configure() {
         bindServices(serviceBinding(RegistrationService.class, RegistrationServiceImpl.class));
-        bindClient(PlayerService.class);
+        bindClient(UserService.class);
     }
 
 }

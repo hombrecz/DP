@@ -19,8 +19,8 @@ import javax.inject.Inject;
 
 import akka.Done;
 import akka.NotUsed;
-import regsystem.player.api.Player;
-import regsystem.player.api.PlayerService;
+import regsystem.user.api.User;
+import regsystem.user.api.UserService;
 import regsystem.registration.api.RegistrationService;
 import regsystem.registration.api.RegistrationTicket;
 import regsystem.registration.api.Team;
@@ -31,15 +31,15 @@ import regsystem.registration.api.Team;
 public class RegistrationServiceImpl implements RegistrationService {
 
     private final PersistentEntityRegistry persistentEntityRegistry;
-    private final PlayerService playerService;
+    private final UserService userService;
     private final CassandraSession db;
     private final Logger log = LoggerFactory.getLogger(RegistrationServiceImpl.class);
 
     @Inject
     public RegistrationServiceImpl(PersistentEntityRegistry persistentEntityRegistry,
-                                   PlayerService playerService, CassandraSession db) {
+                                   UserService userService, CassandraSession db) {
         this.persistentEntityRegistry = persistentEntityRegistry;
-        this.playerService = playerService;
+        this.userService = userService;
         this.db = db;
         persistentEntityRegistry.register(TeamEntity.class);
     }
@@ -48,9 +48,9 @@ public class RegistrationServiceImpl implements RegistrationService {
     public ServiceCall<RegistrationTicket, Done> registerPlayer() {
         return request -> {
             PersistentEntityRef<RegistrationCommand> teamEntity = persistentEntityRegistry.refFor(TeamEntity.class, request.teamId);
-            Player player = new Player(UUID.randomUUID().toString().replaceAll("-", ""), request.name, request.teamId);
-            final CompletionStage<Done> registerToTeam = teamEntity.ask(new RegistrationCommand.RegisterPlayer(player));
-            return registerToTeam.thenCompose(team -> playerService.createPlayer().invoke(player));
+            User user = new User(UUID.randomUUID().toString().replaceAll("-", ""), request.name, request.teamId);
+            final CompletionStage<Done> registerToTeam = teamEntity.ask(new RegistrationCommand.RegisterPlayer(user));
+            return registerToTeam.thenCompose(team -> userService.createUser().invoke(user));
         };
     }
 
