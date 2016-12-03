@@ -12,8 +12,8 @@ import com.lightbend.lagom.serialization.Jsonable;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
+import regsystem.registration.api.Group;
 import regsystem.user.api.User;
-import regsystem.registration.api.Team;
 
 /**
  * @author ondrej.dlabola(at)morosystems.cz
@@ -28,16 +28,16 @@ public interface RegistrationEvent extends Jsonable, AggregateEvent<Registration
     @SuppressWarnings("serial")
     @Immutable
     @JsonDeserialize
-    public final class TeamCreated implements RegistrationEvent {
-        public final String teamId;
-        public final String teamName;
+    public final class GroupCreated implements RegistrationEvent {
+        public final String groupId;
+        public final String groupName;
         public final Integer capacity;
 
         @JsonCreator
-        public TeamCreated(String teamId, String teamName, Integer capacity) {
+        public GroupCreated(String groupId, String groupName, Integer capacity) {
 
-            this.teamId = Preconditions.checkNotNull(teamId, "teamId is null");
-            this.teamName = Preconditions.checkNotNull(teamName, "teamName");
+            this.groupId = Preconditions.checkNotNull(groupId, "groupId is null");
+            this.groupName = Preconditions.checkNotNull(groupName, "groupName");
             this.capacity = Preconditions.checkNotNull(capacity, "capacity");
         }
 
@@ -45,27 +45,27 @@ public interface RegistrationEvent extends Jsonable, AggregateEvent<Registration
         public boolean equals(@Nullable Object another) {
             if (this == another)
                 return true;
-            return another instanceof TeamCreated && equalTo((TeamCreated) another);
+            return another instanceof GroupCreated && equalTo((GroupCreated) another);
         }
 
-        private boolean equalTo(TeamCreated another) {
-            return teamId.equals(another.teamId);
+        private boolean equalTo(GroupCreated another) {
+            return groupId.equals(another.groupId);
         }
 
         @Override
         public int hashCode() {
             int h = 31;
-            h = h * 17 + teamId.hashCode();
-            h = h * 17 + teamName.hashCode();
+            h = h * 17 + groupId.hashCode();
+            h = h * 17 + groupName.hashCode();
             h = h * 17 + capacity.hashCode();
             return h;
         }
 
         @Override
         public String toString() {
-            return MoreObjects.toStringHelper("TeamCreated")
-                    .add("teamId", teamId)
-                    .add("teamName", teamName)
+            return MoreObjects.toStringHelper("GroupCreated")
+                    .add("groupId", groupId)
+                    .add("groupName", groupName)
                     .add("capacity", capacity)
                     .toString();
         }
@@ -74,42 +74,42 @@ public interface RegistrationEvent extends Jsonable, AggregateEvent<Registration
     @SuppressWarnings("serial")
     @Immutable
     @JsonDeserialize
-    public final class PlayerRegistered implements RegistrationEvent {
+    public final class UserRegistered implements RegistrationEvent {
         public final User user;
 
-        public final Team team;
+        public final Group group;
 
         @JsonCreator
-        public PlayerRegistered(User user, Team team) {
+        public UserRegistered(User user, Group group) {
 
             this.user = Preconditions.checkNotNull(user, "user is null");
-            this.team = Preconditions.checkNotNull(team, "team is null");
+            this.group = Preconditions.checkNotNull(group, "group is null");
         }
 
         @Override
         public boolean equals(@Nullable Object another) {
             if (this == another)
                 return true;
-            return another instanceof PlayerRegistered && equalTo((PlayerRegistered) another);
+            return another instanceof UserRegistered && equalTo((UserRegistered) another);
         }
 
-        private boolean equalTo(PlayerRegistered another) {
-            return user.equals(another.user) && team.equals(another.team);
+        private boolean equalTo(UserRegistered another) {
+            return user.equals(another.user) && group.equals(another.group);
         }
 
         @Override
         public int hashCode() {
             int h = 31;
             h = h * 17 + user.hashCode();
-            h = h * 17 + team.hashCode();
+            h = h * 17 + group.hashCode();
             return h;
         }
 
         @Override
         public String toString() {
-            return MoreObjects.toStringHelper("PlayerRegistered")
+            return MoreObjects.toStringHelper("UserRegistered")
                     .add("user", user)
-                    .add("team", team)
+                    .add("group", group)
                     .toString();
         }
     }

@@ -13,8 +13,8 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import akka.Done;
+import regsystem.registration.api.Group;
 import regsystem.user.api.User;
-import regsystem.registration.api.Team;
 
 /**
  * @author ondrej.dlabola(at)morosystems.cz
@@ -24,47 +24,47 @@ public interface RegistrationCommand extends Jsonable {
     @SuppressWarnings("serial")
     @Immutable
     @JsonDeserialize
-    public final class CreateTeam implements RegistrationCommand, CompressedJsonable, PersistentEntity.ReplyType<Done> {
-        public final Team team;
+    public final class CreateGroup implements RegistrationCommand, CompressedJsonable, PersistentEntity.ReplyType<Done> {
+        public final Group group;
 
         @JsonCreator
-        public CreateTeam(Team team) {
-            this.team = Preconditions.checkNotNull(team, "team is null");
+        public CreateGroup(Group group) {
+            this.group = Preconditions.checkNotNull(group, "group is null");
         }
 
         @Override
         public boolean equals(@Nullable Object another) {
             if (this == another)
                 return true;
-            return another instanceof CreateTeam && equalTo((CreateTeam) another);
+            return another instanceof CreateGroup && equalTo((CreateGroup) another);
         }
 
-        private boolean equalTo(CreateTeam another) {
-            return team.equals(another.team);
+        private boolean equalTo(CreateGroup another) {
+            return group.equals(another.group);
         }
 
         @Override
         public int hashCode() {
             int h = 31;
-            h = h * 17 + team.hashCode();
+            h = h * 17 + group.hashCode();
             return h;
         }
 
         @Override
         public String toString() {
-            return MoreObjects.toStringHelper("CreateTeam").add("team", team).toString();
+            return MoreObjects.toStringHelper("CreateGroup").add("group", group).toString();
         }
     }
 
     @SuppressWarnings("serial")
     @Immutable
     @JsonDeserialize
-    public final class RegisterPlayer implements RegistrationCommand, CompressedJsonable, PersistentEntity.ReplyType<Done> {
+    public final class RegisterUser implements RegistrationCommand, CompressedJsonable, PersistentEntity.ReplyType<Done> {
 
         public final User user;
 
         @JsonCreator
-        public RegisterPlayer(User user) {
+        public RegisterUser(User user) {
             this.user = Preconditions.checkNotNull(user, "user is null");
         }
 
@@ -72,10 +72,10 @@ public interface RegistrationCommand extends Jsonable {
         public boolean equals(@Nullable Object another) {
             if (this == another)
                 return true;
-            return another instanceof RegisterPlayer && equalTo((RegisterPlayer) another);
+            return another instanceof RegisterUser && equalTo((RegisterUser) another);
         }
 
-        private boolean equalTo(RegisterPlayer another) {
+        private boolean equalTo(RegisterUser another) {
             return user.equals(another.user);
         }
 
@@ -88,7 +88,7 @@ public interface RegistrationCommand extends Jsonable {
 
         @Override
         public String toString() {
-            return MoreObjects.toStringHelper("RegisterPlayer")
+            return MoreObjects.toStringHelper("RegisterUser")
                     .add("user", user)
                     .toString();
         }

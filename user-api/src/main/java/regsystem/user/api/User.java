@@ -18,13 +18,13 @@ public class User {
 
     public final String userId;
 
-    public final String teamId;
+    public final String groupId;
 
     public final String name;
 
-    public User(String userId, String teamId, String name) {
+    public User(String userId, String groupId, String name) {
         this.userId = Preconditions.checkNotNull(userId, "userId is null");
-        this.teamId = Preconditions.checkNotNull(teamId, "teamId is null");
+        this.groupId = Preconditions.checkNotNull(groupId, "groupId is null");
         this.name = Preconditions.checkNotNull(name, "name is null");
     }
 
@@ -37,14 +37,14 @@ public class User {
 
     private boolean equalTo(User another) {
         return userId.equals(another.userId)
-                && teamId.equals(another.teamId)
+                && groupId.equals(another.groupId)
                 && name.equals(another.name);
     }
 
     @Override
     public int hashCode() {
         int result = userId != null ? userId.hashCode() : 0;
-        result = 31 * result + (teamId != null ? teamId.hashCode() : 0);
+        result = 31 * result + (groupId != null ? groupId.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
     }
@@ -53,7 +53,7 @@ public class User {
     public String toString() {
         return MoreObjects.toStringHelper("User")
                 .add("userId", userId)
-                .add("teamId", teamId)
+                .add("groupId", groupId)
                 .add("name", name)
                 .toString();
     }

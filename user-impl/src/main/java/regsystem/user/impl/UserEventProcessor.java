@@ -52,7 +52,7 @@ public class UserEventProcessor extends CassandraReadSideProcessor<UserEvent> {
     private CompletionStage<Done> prepareCreateTables(CassandraSession session) {
         return session.executeCreateTable(
                 "CREATE TABLE IF NOT EXISTS user ("
-                        + "userId text, teamId text, name text,"
+                        + "userId text, groupId text, name text,"
                         + "PRIMARY KEY (userId))")
                 .thenCompose(a -> session.executeCreateTable(
                         "CREATE TABLE IF NOT EXISTS user_offset ("
@@ -61,7 +61,7 @@ public class UserEventProcessor extends CassandraReadSideProcessor<UserEvent> {
     }
 
     private CompletionStage<Done> prepareWriteUser(CassandraSession session) {
-        return session.prepare("INSERT INTO user (userId, teamId, name) VALUES (?, ?, ?)").thenApply(ps -> {
+        return session.prepare("INSERT INTO user (userId, groupId, name) VALUES (?, ?, ?)").thenApply(ps -> {
             setWriteUser(ps);
             return Done.getInstance();
         });
@@ -89,7 +89,7 @@ public class UserEventProcessor extends CassandraReadSideProcessor<UserEvent> {
     private CompletionStage<List<BoundStatement>> processUserCreated(UserEvent.UserCreated event, UUID offset) {
         BoundStatement bindCreateUser = writeUser.bind();
         bindCreateUser.setString("userId", event.userId);
-        bindCreateUser.setString("teamId", event.teamId);
+        bindCreateUser.setString("groupId", event.groupId);
         bindCreateUser.setString("name", event.name);
         BoundStatement bindWriteOffset = writeOffset.bind(offset);
         log.info("Persisted user {}", event.name);

@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
             CompletionStage<PSequence<User>> result
                     = db.selectAll("SELECT * FROM user").thenApply(rows -> {
                 List<User> list = rows.stream().map(r -> new User(r.getString("userId"),
-                        r.getString("teamId"), r.getString("name"))).collect(Collectors.toList());
+                        r.getString("groupId"), r.getString("name"))).collect(Collectors.toList());
                 return TreePVector.from(list);
             });
 

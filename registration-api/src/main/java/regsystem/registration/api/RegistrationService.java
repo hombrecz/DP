@@ -18,17 +18,17 @@ import static com.lightbend.lagom.javadsl.api.Service.restCall;
  */
 public interface RegistrationService extends Service {
 
-    ServiceCall<RegistrationTicket, Done> registerPlayer();
-    ServiceCall<Team, Done> createTeam();
+    ServiceCall<RegistrationTicket, Done> registerUser();
+    ServiceCall<Group, Done> createGroup();
 
-    ServiceCall<NotUsed, PSequence<Team>> getTeams();
+    ServiceCall<NotUsed, PSequence<Group>> getGroups();
 
     @Override
     default Descriptor descriptor() {
         return named("registrationService").withCalls(
-                restCall(Method.POST, "/api/registration", this::registerPlayer),
-                restCall(Method.POST, "/api/teams", this::createTeam),
-                restCall(Method.GET, "/api/teams/all", this::getTeams)
+                restCall(Method.POST, "/api/registration", this::registerUser),
+                restCall(Method.POST, "/api/groups", this::createGroup),
+                restCall(Method.GET, "/api/groups/all", this::getGroups)
         ).withAutoAcl(true);
     }
 

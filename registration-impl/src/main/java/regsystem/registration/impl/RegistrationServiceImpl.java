@@ -19,11 +19,11 @@ import javax.inject.Inject;
 
 import akka.Done;
 import akka.NotUsed;
+import regsystem.registration.api.Group;
 import regsystem.user.api.User;
 import regsystem.user.api.UserService;
 import regsystem.registration.api.RegistrationService;
 import regsystem.registration.api.RegistrationTicket;
-import regsystem.registration.api.Team;
 
 /**
  * @author ondrej.dlabola(at)morosystems.cz
@@ -41,36 +41,36 @@ public class RegistrationServiceImpl implements RegistrationService {
         this.persistentEntityRegistry = persistentEntityRegistry;
         this.userService = userService;
         this.db = db;
-        persistentEntityRegistry.register(TeamEntity.class);
+        persistentEntityRegistry.register(GroupEntity.class);
     }
 
     @Override
-    public ServiceCall<RegistrationTicket, Done> registerPlayer() {
+    public ServiceCall<RegistrationTicket, Done> registerUser() {
         return request -> {
-            PersistentEntityRef<RegistrationCommand> teamEntity = persistentEntityRegistry.refFor(TeamEntity.class, request.teamId);
-            User user = new User(UUID.randomUUID().toString().replaceAll("-", ""), request.name, request.teamId);
-            final CompletionStage<Done> registerToTeam = teamEntity.ask(new RegistrationCommand.RegisterPlayer(user));
-            return registerToTeam.thenCompose(team -> userService.createUser().invoke(user));
+            PersistentEntityRef<RegistrationCommand> groupEntity = persistentEntityRegistry.refFor(GroupEntity.class, request.groupId);
+            User user = new User(UUID.randomUUID().toString().replaceAll("-", ""), request.name, request.groupId);
+            final CompletionStage<Done> registerToGroup = groupEntity.ask(new RegistrationCommand.RegisterUser(user));
+            return registerToGroup.thenCompose(group -> userService.createUser().invoke(user));
         };
     }
 
     @Override
-    public ServiceCall<Team, Done> createTeam() {
+    public ServiceCall<Group, Done> createGroup() {
         return request -> {
-            log.info("Team: {}.", request.teamName);
+            log.info("Group: {}.", request.groupName);
             PersistentEntityRef<RegistrationCommand> ref =
-                    persistentEntityRegistry.refFor(TeamEntity.class, request.teamId);
-            return ref.ask(new RegistrationCommand.CreateTeam(request));
+                    persistentEntityRegistry.refFor(GroupEntity.class, request.groupId);
+            return ref.ask(new RegistrationCommand.CreateGroup(request));
         };
     }
 
     @Override
-    public ServiceCall<NotUsed, PSequence<Team>> getTeams() {
+    public ServiceCall<NotUsed, PSequence<Group>> getGroups() {
         return (req) -> {
-            CompletionStage<PSequence<Team>> result
-                    = db.selectAll("SELECT * FROM teams").thenApply(rows -> {
-                List<Team> list = rows.stream().map(r -> new Team(r.getString("teamId"),
-                        r.getString("teamName"), r.getInt("capacity"))).collect(Collectors.toList());
+            CompletionStage<PSequence<Group>> result
+                    = db.selectAll("SELECT * FROM groups").thenApply(rows -> {
+                List<Group> list = rows.stream().map(r -> new Group(r.getString("groupId"),
+                        r.getString("groupName"), r.getInt("capacity"))).collect(Collectors.toList());
                 return TreePVector.from(list);
             });
             return result;

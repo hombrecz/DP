@@ -7,25 +7,25 @@ Registration system like microservices application build on Lightbend Lagom fram
 
 ## API
 
-### create team
+### create group
 
-`curl 'http://localhost:9000/api/teams' -X POST -d '{"teamId":"alpha2", "teamName":"Alpha-2", "capacity":"30"}' -H 'Content-Type: application/json'`
-+ POST /api/teams
-+ BODY `{"teamId":"alpha2", "teamName":"Alpha-2", "capacity":"30"}`
+`curl 'http://localhost:9000/api/groups' -X POST -d '{"groupId":"alpha2", "groupName":"Alpha-2", "capacity":"30"}' -H 'Content-Type: application/json'`
++ POST /api/groups
++ BODY `{"groupId":"alpha2", "groupName":"Alpha-2", "capacity":"30"}`
 
 ### register user
 
-`curl 'http://localhost:9000/api/registration' -X POST -d '{"registrationId":"whatever", "teamId":"alpha1", "name":"John"}' -H 'Content-Type: application/json'`
+`curl 'http://localhost:9000/api/registration' -X POST -d '{"registrationId":"whatever", "groupId":"alpha1", "name":"John"}' -H 'Content-Type: application/json'`
 + POST /api/registration
-+ BODY `{"registrationId":"whatever", "teamId":"alpha1", "name":"John"}`
++ BODY `{"registrationId":"whatever", "groupId":"alpha1", "name":"John"}`
 
-### get teams
-`curl 'http://localhost:9000/api/teams/all'`
+### get groups
+`curl 'http://localhost:9000/api/groups/all'`
 
-+ GET /api/teams/all
++ GET /api/groups/all
 
-### get players
+### get users
 
-`curl 'http://localhost:9000/api/players/all'`
+`curl 'http://localhost:9000/api/users/all'`
 
-+ GET /api/players/all
++ GET /api/users/all

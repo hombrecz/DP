@@ -14,17 +14,17 @@ import jdk.nashorn.internal.ir.annotations.Immutable;
  */
 @Immutable
 @JsonDeserialize
-public class Team {
+public class Group {
 
-    public final String teamId;
+    public final String groupId;
 
-    public final String teamName;
+    public final String groupName;
 
     public final Integer capacity;
 
-    public Team(String teamId, String teamName, Integer capacity) {
-        this.teamId = Preconditions.checkNotNull(teamId, "teamId is null");
-        this.teamName = Preconditions.checkNotNull(teamName, "teamName is null");
+    public Group(String groupId, String groupName, Integer capacity) {
+        this.groupId = Preconditions.checkNotNull(groupId, "groupId is null");
+        this.groupName = Preconditions.checkNotNull(groupName, "groupName is null");
         this.capacity = Preconditions.checkNotNull(capacity, "capacity is null");
     }
 
@@ -32,26 +32,26 @@ public class Team {
     public boolean equals(@Nullable Object another) {
         if (this == another)
             return true;
-        return another instanceof Team && equalTo((Team) another);
+        return another instanceof Group && equalTo((Group) another);
     }
 
-    private boolean equalTo(Team another) {
-        return teamId.equals(another.teamId) && teamName.equals(another.teamName) && capacity.equals(another.capacity);
+    private boolean equalTo(Group another) {
+        return groupId.equals(another.groupId) && groupName.equals(another.groupName) && capacity.equals(another.capacity);
     }
 
     @Override
     public int hashCode() {
-        int result = teamId != null ? teamId.hashCode() : 0;
-        result = 31 * result + (teamName != null ? teamName.hashCode() : 0);
+        int result = groupId != null ? groupId.hashCode() : 0;
+        result = 31 * result + (groupName != null ? groupName.hashCode() : 0);
         result = 31 * result + (capacity != null ? capacity.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper("Team")
-                .add("teamId", teamId)
-                .add("teamName", teamName)
+        return MoreObjects.toStringHelper("Group")
+                .add("groupId", groupId)
+                .add("groupName", groupName)
                 .add("capacity", capacity)
                 .toString();
     }

@@ -24,12 +24,12 @@ public class RegistrationEventProcessor extends CassandraReadSideProcessor<Regis
 
     private final Logger log = LoggerFactory.getLogger(RegistrationEventProcessor.class);
 
-    private PreparedStatement writeTeam = null;
+    private PreparedStatement writeGroup = null;
     private PreparedStatement decreaseCapacity = null;
     private PreparedStatement writeOffset = null;
 
-    private void setWriteTeam(PreparedStatement writeTeam) {
-        this.writeTeam = writeTeam;
+    private void setWriteGroup(PreparedStatement writeGroup) {
+        this.writeGroup = writeGroup;
     }
 
     private void setDecreaseCapacity(PreparedStatement decreaseCapacity) {
@@ -49,7 +49,7 @@ public class RegistrationEventProcessor extends CassandraReadSideProcessor<Regis
     public CompletionStage<Optional<UUID>> prepare(CassandraSession session) {
         return
                 prepareCreateTables(session).thenCompose(a ->
-                        prepareWriteTeam(session).thenCompose(b ->
+                        prepareWriteGroup(session).thenCompose(b ->
                                 prepareDecreaseCapacity(session).thenCompose(c ->
                                         prepareWriteOffset(session).thenCompose(d ->
                                                 selectOffset(session)))));
@@ -57,65 +57,65 @@ public class RegistrationEventProcessor extends CassandraReadSideProcessor<Regis
 
     private CompletionStage<Done> prepareCreateTables(CassandraSession session) {
         return session.executeCreateTable(
-                "CREATE TABLE IF NOT EXISTS team ("
-                        + "teamId text, teamName text, capacity int,"
-                        + "PRIMARY KEY (teamId))")
+                "CREATE TABLE IF NOT EXISTS group ("
+                        + "groupId text, groupName text, capacity int,"
+                        + "PRIMARY KEY (groupId))")
                 .thenCompose(a -> session.executeCreateTable(
-                        "CREATE TABLE IF NOT EXISTS team_offset ("
+                        "CREATE TABLE IF NOT EXISTS group_offset ("
                                 + "partition int, offset timeuuid, "
                                 + "PRIMARY KEY (partition))"));
     }
 
-    private CompletionStage<Done> prepareWriteTeam(CassandraSession session) {
-        return session.prepare("INSERT INTO team (teamId, teamName, capacity) VALUES (?, ?, ?)").thenApply(ps -> {
-            setWriteTeam(ps);
+    private CompletionStage<Done> prepareWriteGroup(CassandraSession session) {
+        return session.prepare("INSERT INTO group (groupId, groupName, capacity) VALUES (?, ?, ?)").thenApply(ps -> {
+            setWriteGroup(ps);
             return Done.getInstance();
         });
     }
 
     private CompletionStage<Done> prepareDecreaseCapacity(CassandraSession session) {
-        return session.prepare("UPDATE team set capacity = ? where teamId = ?").thenApply(ps -> {
+        return session.prepare("UPDATE group set capacity = ? where groupId = ?").thenApply(ps -> {
             setDecreaseCapacity(ps);
             return Done.getInstance();
         });
     }
 
     private CompletionStage<Done> prepareWriteOffset(CassandraSession session) {
-        return session.prepare("INSERT INTO team_offset (partition, offset) VALUES (1, ?)").thenApply(ps -> {
+        return session.prepare("INSERT INTO group_offset (partition, offset) VALUES (1, ?)").thenApply(ps -> {
             setWriteOffset(ps);
             return Done.getInstance();
         });
     }
 
     private CompletionStage<Optional<UUID>> selectOffset(CassandraSession session) {
-        return session.selectOne("SELECT offset FROM team_offset")
+        return session.selectOne("SELECT offset FROM group_offset")
                 .thenApply(
                         optionalRow -> optionalRow.map(r -> r.getUUID("offset")));
     }
 
     @Override
     public EventHandlers defineEventHandlers(EventHandlersBuilder builder) {
-        builder.setEventHandler(RegistrationEvent.TeamCreated.class, this::processTeamCreated);
-        builder.setEventHandler(RegistrationEvent.PlayerRegistered.class, this::processPlayerRegistered);
+        builder.setEventHandler(RegistrationEvent.GroupCreated.class, this::processGroupCreated);
+        builder.setEventHandler(RegistrationEvent.UserRegistered.class, this::processUserRegistered);
         return builder.build();
     }
 
-    private CompletionStage<List<BoundStatement>> processTeamCreated(RegistrationEvent.TeamCreated event, UUID offset) {
-        BoundStatement bindWriteTeam = writeTeam.bind();
-        bindWriteTeam.setString("teamId", event.teamId);
-        bindWriteTeam.setString("teamName", event.teamName);
-        bindWriteTeam.setInt("capacity", event.capacity);
+    private CompletionStage<List<BoundStatement>> processGroupCreated(RegistrationEvent.GroupCreated event, UUID offset) {
+        BoundStatement bindWriteGroup = writeGroup.bind();
+        bindWriteGroup.setString("groupId", event.groupId);
+        bindWriteGroup.setString("groupName", event.groupName);
+        bindWriteGroup.setInt("capacity", event.capacity);
         BoundStatement bindWriteOffset = writeOffset.bind(offset);
-        log.info("Persisted team {}", event.teamName);
-        return completedStatements(Arrays.asList(bindWriteTeam, bindWriteOffset));
+        log.info("Persisted group {}", event.groupName);
+        return completedStatements(Arrays.asList(bindWriteGroup, bindWriteOffset));
     }
 
-    private CompletionStage<List<BoundStatement>> processPlayerRegistered(RegistrationEvent.PlayerRegistered event, UUID offset) {
+    private CompletionStage<List<BoundStatement>> processUserRegistered(RegistrationEvent.UserRegistered event, UUID offset) {
         BoundStatement bindDecreaseCapacity = decreaseCapacity.bind();
-        bindDecreaseCapacity.setString("teamId", event.team.teamId);
-        bindDecreaseCapacity.setInt("capacity", event.team.capacity);
+        bindDecreaseCapacity.setString("groupId", event.group.groupId);
+        bindDecreaseCapacity.setInt("capacity", event.group.capacity);
         BoundStatement bindWriteOffset = writeOffset.bind(offset);
-        log.info("Decreased capacity of team {} to {}", event.team.teamName, event.team.capacity);
+        log.info("Decreased capacity of group {} to {}", event.group.groupName, event.group.capacity);
         return completedStatements(Arrays.asList(bindDecreaseCapacity, bindWriteOffset));
     }
 }

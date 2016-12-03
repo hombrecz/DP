@@ -5,14 +5,14 @@ scalaVersion in ThisBuild := "2.11.7"
 
 lagomCassandraCleanOnStart in ThisBuild := true
 
-lazy val playerApi = project("player-api")
+lazy val userApi = project("user-api")
   .settings(
     version := "1.0-SNAPSHOT",
     libraryDependencies += lagomJavadslApi,
     javacOptions ++= Seq("-encoding", "UTF-8")
   )
 
-lazy val playerImpl = project("player-impl")
+lazy val userImpl = project("user-impl")
   .enablePlugins(LagomJava)
   .settings(
     version := "1.0-SNAPSHOT",
@@ -22,7 +22,7 @@ lazy val playerImpl = project("player-impl")
     ),
     javacOptions ++= Seq("-encoding", "UTF-8")
   )
-  .dependsOn(playerApi)
+  .dependsOn(userApi)
 
 lazy val registrationApi = project("registration-api")
   .settings(version := "1.0-SNAPSHOT")
@@ -34,7 +34,7 @@ lazy val registrationApi = project("registration-api")
 lazy val registrationImpl = project("registration-impl")
   .settings(version := "1.0-SNAPSHOT")
   .enablePlugins(LagomJava)
-  .dependsOn(registrationApi, playerApi)
+  .dependsOn(registrationApi, userApi)
   .settings(
     libraryDependencies ++= Seq(
       lagomJavadslPersistenceCassandra,
