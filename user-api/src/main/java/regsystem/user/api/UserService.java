@@ -26,7 +26,7 @@ public interface UserService extends Service {
     @Override
     default Descriptor descriptor() {
         return named("userService").withCalls(
-                namedCall("/api/userss/", this::createUser),
+                namedCall("/api/users/", this::createUser),
                 restCall(Method.GET, "/api/users/all", this::getUsers)
         ).withAutoAcl(true);
     }

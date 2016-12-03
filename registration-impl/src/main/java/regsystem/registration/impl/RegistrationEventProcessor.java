@@ -113,7 +113,7 @@ public class RegistrationEventProcessor extends CassandraReadSideProcessor<Regis
     private CompletionStage<List<BoundStatement>> processUserRegistered(RegistrationEvent.UserRegistered event, UUID offset) {
         BoundStatement bindDecreaseCapacity = decreaseCapacity.bind();
         bindDecreaseCapacity.setString("groupId", event.group.groupId);
-        bindDecreaseCapacity.setInt("capacity", event.group.capacity);
+        bindDecreaseCapacity.setInt("capacity", event.group.capacity - 1);
         BoundStatement bindWriteOffset = writeOffset.bind(offset);
         log.info("Decreased capacity of group {} to {}", event.group.groupName, event.group.capacity);
         return completedStatements(Arrays.asList(bindDecreaseCapacity, bindWriteOffset));

@@ -68,7 +68,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     public ServiceCall<NotUsed, PSequence<Group>> getGroups() {
         return (req) -> {
             CompletionStage<PSequence<Group>> result
-                    = db.selectAll("SELECT * FROM groups").thenApply(rows -> {
+                    = db.selectAll("SELECT * FROM group").thenApply(rows -> {
                 List<Group> list = rows.stream().map(r -> new Group(r.getString("groupId"),
                         r.getString("groupName"), r.getInt("capacity"))).collect(Collectors.toList());
                 return TreePVector.from(list);
