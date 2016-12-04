@@ -4,6 +4,7 @@ import com.lightbend.lagom.javadsl.persistence.PersistentEntity;
 
 import java.util.Optional;
 
+import akka.Done;
 import regsystem.user.api.User;
 
 /**
@@ -23,7 +24,7 @@ public class UserEntity extends PersistentEntity<UserCommand, UserEvent, UserSta
             } else {
                 User user = cmd.user;
                 UserEvent event = new UserEvent.UserCreated(user.userId, user.groupId, user.name);
-                return ctx.thenPersist(event);
+                return ctx.thenPersist(event, evt -> ctx.reply(Done.getInstance()));
             }
         });
 

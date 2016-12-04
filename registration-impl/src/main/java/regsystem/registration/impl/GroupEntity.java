@@ -4,6 +4,7 @@ import com.lightbend.lagom.javadsl.persistence.PersistentEntity;
 
 import java.util.Optional;
 
+import akka.Done;
 import regsystem.registration.api.Group;
 import regsystem.user.api.User;
 
@@ -26,7 +27,7 @@ public class GroupEntity extends PersistentEntity<RegistrationCommand, Registrat
                     } else {
                         Group group = cmd.group;
                         RegistrationEvent.GroupCreated event = new RegistrationEvent.GroupCreated(group.groupId, group.groupName, group.capacity);
-                        return ctx.thenPersist(event);
+                        return ctx.thenPersist(event, evt -> ctx.reply(Done.getInstance()));
                     }
                 });
 
@@ -39,7 +40,7 @@ public class GroupEntity extends PersistentEntity<RegistrationCommand, Registrat
                         if (state().group.get().capacity > 0) {
                             RegistrationEvent.UserRegistered event = new RegistrationEvent.UserRegistered(
                                     new User(cmd.user.userId, state().group.get().groupId, cmd.user.name), state().group.get());
-                            return ctx.thenPersist(event);
+                            return ctx.thenPersist(event, evt -> ctx.reply(Done.getInstance()));
                         } else {
                             ctx.invalidCommand("Capacity of group " + entityId() + " is full");
                             return ctx.done();
