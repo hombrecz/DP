@@ -43,7 +43,6 @@ public class UserEventProcessor extends ReadSideProcessor<UserEvent> {
         this.writeUser = writeUser;
     }
 
-    @Override
     public PSequence<AggregateEventTag<UserEvent>> aggregateTags() {
         return TreePVector.singleton(UserEventTag.INSTANCE);
     }
@@ -67,6 +66,7 @@ public class UserEventProcessor extends ReadSideProcessor<UserEvent> {
     private CompletionStage<Done> prepareWriteUser() {
         return session.prepare("INSERT INTO user (userId, groupId, name) VALUES (?, ?, ?)").thenApply(ps -> {
             setWriteUser(ps);
+            log.info("User write prepared statement - OK");
             return Done.getInstance();
         });
     }

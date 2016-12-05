@@ -52,6 +52,4 @@ lazy val jacksonParameterNamesJavacSettings = Seq(
   javacOptions in compile += "-parameters"
 )
 
-lagomCassandraCleanOnStart in ThisBuild := true
-
 fork in run := true

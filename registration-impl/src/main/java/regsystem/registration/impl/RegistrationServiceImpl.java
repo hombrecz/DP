@@ -32,9 +32,10 @@ import regsystem.user.api.UserService;
 public class RegistrationServiceImpl implements RegistrationService {
 
     private final PersistentEntityRegistry persistentEntityRegistry;
-    private final UserService userService;
     private final CassandraSession db;
     private final Logger log = LoggerFactory.getLogger(RegistrationServiceImpl.class);
+
+    private final UserService userService;
 
     @Inject
     public RegistrationServiceImpl(PersistentEntityRegistry persistentEntityRegistry, ReadSide readSide,
@@ -57,11 +58,11 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public ServiceCall<Group, NotUsed> createGroup() {
+    public ServiceCall<Group, Done> createGroup() {
         return request -> {
             log.info("Group: {}.", request.groupName);
             return groupEntityRef(request.groupId).ask(new RegistrationCommand.CreateGroup(request))
-                    .thenApply(ack -> NotUsed.getInstance());
+                    .thenApply(ack -> Done.getInstance());
         };
     }
 

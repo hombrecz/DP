@@ -15,9 +15,9 @@ Registration system like microservices application build on Lightbend Lagom fram
 
 ### register user
 
-`curl 'http://localhost:9000/api/registration' -X POST -d '{"registrationId":"whatever", "groupId":"alpha1", "name":"John"}' -H 'Content-Type: application/json'`
+`curl 'http://localhost:9000/api/registration' -X POST -d '{"registrationId":"whatever", "groupId":"alpha1", "userName":"John"}' -H 'Content-Type: application/json'`
 + POST /api/registration
-+ BODY `{"registrationId":"whatever", "groupId":"alpha1", "name":"John"}`
++ BODY `{"registrationId":"whatever", "groupId":"alpha1", "userName":"John"}`
 
 ### get groups
 `curl 'http://localhost:9000/api/groups/all'`

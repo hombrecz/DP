@@ -57,8 +57,7 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
     public ReadSideHandler<RegistrationEvent> buildHandler() {
         return readSide.<RegistrationEvent>builder("group_offset")
                 .setGlobalPrepare(this::prepareCreateTables)
-                .setPrepare((ignored) -> prepareWriteGroup())
-                .setPrepare((ignored) -> prepareDecreaseCapacity())
+                .setPrepare((ignored) -> prepareStatements())
                 .setEventHandler(RegistrationEvent.GroupCreated.class, this::processGroupCreated)
                 .setEventHandler(RegistrationEvent.UserRegistered.class, this::processUserRegistered)
                 .build();
@@ -71,9 +70,14 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
                         + "PRIMARY KEY (groupId))");
     }
 
+    private CompletionStage<Done> prepareStatements() {
+        return prepareWriteGroup().thenCompose(a -> prepareDecreaseCapacity());
+    }
+
     private CompletionStage<Done> prepareWriteGroup() {
         return session.prepare("INSERT INTO group (groupId, groupName, capacity) VALUES (?, ?, ?)").thenApply(ps -> {
             setWriteGroup(ps);
+            log.info("Registration write group prepared statement - OK");
             return Done.getInstance();
         });
     }
@@ -81,6 +85,7 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
     private CompletionStage<Done> prepareDecreaseCapacity() {
         return session.prepare("UPDATE group set capacity = ? where groupId = ?").thenApply(ps -> {
             setDecreaseCapacity(ps);
+            log.info("Registration decrease capacity prepared statement - OK");
             return Done.getInstance();
         });
     }

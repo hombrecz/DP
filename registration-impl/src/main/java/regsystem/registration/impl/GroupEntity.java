@@ -19,8 +19,7 @@ public class GroupEntity extends PersistentEntity<RegistrationCommand, Registrat
         BehaviorBuilder builder = newBehaviorBuilder(snapshotState.orElse(
                 new GroupState(Optional.empty())));
 
-        builder.setCommandHandler(RegistrationCommand.CreateGroup.class,
-                (cmd, ctx) -> {
+        builder.setCommandHandler(RegistrationCommand.CreateGroup.class, (cmd, ctx) -> {
                     if (state().group.isPresent()) {
                         ctx.invalidCommand("Group " + entityId() + " is already created");
                         return ctx.done();

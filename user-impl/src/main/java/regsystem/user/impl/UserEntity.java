@@ -14,6 +14,7 @@ public class UserEntity extends PersistentEntity<UserCommand, UserEvent, UserSta
 
     @Override
     public Behavior initialBehavior(Optional<UserState> snapshotState) {
+
         BehaviorBuilder builder = newBehaviorBuilder(snapshotState.orElse(
                 new UserState(Optional.empty())));
 
