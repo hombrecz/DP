@@ -100,10 +100,12 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
     }
 
     private CompletionStage<List<BoundStatement>> processUserRegistered(RegistrationEvent.UserRegistered event) {
+        final Integer decreasedCapacity = event.group.capacity - 1;
+
         BoundStatement bindDecreaseCapacity = decreaseCapacity.bind();
         bindDecreaseCapacity.setString("groupId", event.group.groupId);
-        bindDecreaseCapacity.setInt("capacity", event.group.capacity - 1);
-        log.info("Decreased capacity of group {} to {}", event.group.groupName, event.group.capacity);
+        bindDecreaseCapacity.setInt("capacity", decreasedCapacity);
+        log.info("Decreased capacity of group {} to {}", event.group.groupName, decreasedCapacity);
         return completedStatement(bindDecreaseCapacity);
     }
 }
