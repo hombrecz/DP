@@ -31,7 +31,7 @@ public class GroupState implements CompressedJsonable {
 
     public GroupState registerUser() {
         Group t = group.get();
-        return new GroupState(Optional.of(new Group(t.groupId, t.groupName, t.capacity - 1)));
+        return new GroupState(Optional.of(new Group(t.groupId, t.groupName,t.capacity - 1, Optional.ofNullable(t.users))));
 
 
     }

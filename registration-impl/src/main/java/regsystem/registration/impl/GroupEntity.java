@@ -25,13 +25,13 @@ public class GroupEntity extends PersistentEntity<RegistrationCommand, Registrat
                         return ctx.done();
                     } else {
                         Group group = cmd.group;
-                        RegistrationEvent.GroupCreated event = new RegistrationEvent.GroupCreated(group.groupId, group.groupName, group.capacity);
+                        RegistrationEvent.GroupCreated event = new RegistrationEvent.GroupCreated(group.groupId, group.groupName, group.capacity, Optional.empty());
                         return ctx.thenPersist(event, evt -> ctx.reply(Done.getInstance()));
                     }
                 });
 
         builder.setEventHandler(RegistrationEvent.GroupCreated.class,
-                evt -> new GroupState(Optional.of(new Group(evt.groupId, evt.groupName, evt.capacity))));
+                evt -> new GroupState(Optional.of(new Group(evt.groupId, evt.groupName, evt.capacity, Optional.empty()))));
 
         builder.setCommandHandler(RegistrationCommand.RegisterUser.class,
                 (cmd, ctx) -> {

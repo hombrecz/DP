@@ -9,6 +9,11 @@ import com.lightbend.lagom.javadsl.persistence.AggregateEvent;
 import com.lightbend.lagom.javadsl.persistence.AggregateEventTag;
 import com.lightbend.lagom.serialization.Jsonable;
 
+import org.pcollections.PSequence;
+import org.pcollections.TreePVector;
+
+import java.util.Optional;
+
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
@@ -32,13 +37,15 @@ public interface RegistrationEvent extends Jsonable, AggregateEvent<Registration
         public final String groupId;
         public final String groupName;
         public final Integer capacity;
+        public final PSequence<String> users;
 
         @JsonCreator
-        public GroupCreated(String groupId, String groupName, Integer capacity) {
+        public GroupCreated(String groupId, String groupName, Integer capacity, Optional<PSequence<String>> users) {
 
             this.groupId = Preconditions.checkNotNull(groupId, "groupId is null");
             this.groupName = Preconditions.checkNotNull(groupName, "groupName");
             this.capacity = Preconditions.checkNotNull(capacity, "capacity");
+            this.users = users.orElse(TreePVector.empty());
         }
 
         @Override
@@ -58,6 +65,7 @@ public interface RegistrationEvent extends Jsonable, AggregateEvent<Registration
             h = h * 17 + groupId.hashCode();
             h = h * 17 + groupName.hashCode();
             h = h * 17 + capacity.hashCode();
+            h = h * 17 + users.hashCode();
             return h;
         }
 
@@ -67,6 +75,7 @@ public interface RegistrationEvent extends Jsonable, AggregateEvent<Registration
                     .add("groupId", groupId)
                     .add("groupName", groupName)
                     .add("capacity", capacity)
+                    .add("users", users)
                     .toString();
         }
     }

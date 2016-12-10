@@ -12,6 +12,7 @@ import org.pcollections.TreePVector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
@@ -66,7 +67,7 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
     private CompletionStage<Done> prepareCreateTables() {
         return session.executeCreateTable(
                 "CREATE TABLE IF NOT EXISTS group ("
-                        + "groupId text, groupName text, capacity int,"
+                        + "groupId text, groupName text, capacity int, users list<text>,"
                         + "PRIMARY KEY (groupId))");
     }
 
@@ -75,7 +76,7 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
     }
 
     private CompletionStage<Done> prepareWriteGroup() {
-        return session.prepare("INSERT INTO group (groupId, groupName, capacity) VALUES (?, ?, ?)").thenApply(ps -> {
+        return session.prepare("INSERT INTO group (groupId, groupName, capacity, users) VALUES (?, ?, ?, ?)").thenApply(ps -> {
             setWriteGroup(ps);
             log.info("Registration write group prepared statement - OK");
             return Done.getInstance();
@@ -83,7 +84,7 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
     }
 
     private CompletionStage<Done> prepareDecreaseCapacity() {
-        return session.prepare("UPDATE group set capacity = ? where groupId = ?").thenApply(ps -> {
+        return session.prepare("UPDATE group SET capacity = ?, users = users + ? WHERE groupId = ?").thenApply(ps -> {
             setDecreaseCapacity(ps);
             log.info("Registration decrease capacity prepared statement - OK");
             return Done.getInstance();
@@ -95,17 +96,21 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
         bindWriteGroup.setString("groupId", event.groupId);
         bindWriteGroup.setString("groupName", event.groupName);
         bindWriteGroup.setInt("capacity", event.capacity);
+        bindWriteGroup.setList("users", event.users);
         log.info("Persisted group {}", event.groupName);
         return completedStatement(bindWriteGroup);
     }
 
     private CompletionStage<List<BoundStatement>> processUserRegistered(RegistrationEvent.UserRegistered event) {
-        final Integer decreasedCapacity = event.group.capacity - 1;
+        Integer decreasedCapacity = event.group.capacity - 1;
+        List<String> registeredUsers = new ArrayList<>();
+        registeredUsers.add(event.user.userId);
 
         BoundStatement bindDecreaseCapacity = decreaseCapacity.bind();
         bindDecreaseCapacity.setString("groupId", event.group.groupId);
         bindDecreaseCapacity.setInt("capacity", decreasedCapacity);
-        log.info("Decreased capacity of group {} to {}", event.group.groupName, decreasedCapacity);
+        bindDecreaseCapacity.setList("users", registeredUsers);
+        log.info("Decreased capacity of group {} to {}, added player {}", event.group.groupName, decreasedCapacity, event.user.name);
         return completedStatement(bindDecreaseCapacity);
     }
 }

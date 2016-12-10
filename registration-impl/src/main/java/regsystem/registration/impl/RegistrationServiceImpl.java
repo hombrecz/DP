@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
@@ -50,8 +51,8 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public ServiceCall<RegistrationTicket, Done> registerUser() {
         return request -> {
-            PersistentEntityRef<RegistrationCommand> groupEntity = persistentEntityRegistry.refFor(GroupEntity.class, request.groupId);
-            User user = new User(UUID.randomUUID().toString().replaceAll("-", ""), request.userName, request.groupId);
+            PersistentEntityRef<RegistrationCommand> groupEntity = groupEntityRef(request.groupId);
+            User user = new User(UUID.randomUUID().toString().replaceAll("-", ""), request.groupId, request.userName);
             final CompletionStage<Done> registerToGroup = groupEntity.ask(new RegistrationCommand.RegisterUser(user));
             return registerToGroup.thenCompose(group -> userService.createUser().invoke(user));
         };
@@ -60,7 +61,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public ServiceCall<Group, Done> createGroup() {
         return request -> {
-            log.info("Group: {}.", request.groupName);
+            log.info("Creating group: {}.", request.groupName);
             return groupEntityRef(request.groupId).ask(new RegistrationCommand.CreateGroup(request))
                     .thenApply(ack -> Done.getInstance());
         };
@@ -71,8 +72,12 @@ public class RegistrationServiceImpl implements RegistrationService {
         return (req) -> {
             CompletionStage<PSequence<Group>> result
                     = db.selectAll("SELECT * FROM group").thenApply(rows -> {
-                List<Group> list = rows.stream().map(r -> new Group(r.getString("groupId"),
-                        r.getString("groupName"), r.getInt("capacity"))).collect(Collectors.toList());
+                List<Group> list = rows.stream().map(r -> {
+                    Group group = new Group(r.getString("groupId"),
+                            r.getString("groupName"), r.getInt("capacity"), getUsersFromList(r.getList("users",String.class)));
+                    log.info("Returning group: {}",group);
+                    return group;
+                }).collect(Collectors.toList());
                 return TreePVector.from(list);
             });
             return result;
@@ -82,6 +87,10 @@ public class RegistrationServiceImpl implements RegistrationService {
     private PersistentEntityRef<RegistrationCommand> groupEntityRef(String groupId) {
         PersistentEntityRef<RegistrationCommand> ref = persistentEntityRegistry.refFor(GroupEntity.class, groupId);
         return ref;
+    }
+
+    private Optional<PSequence<String>> getUsersFromList(List<String> users) {
+        return Optional.of(TreePVector.from(users));
     }
 
 }
