@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
         return (request) -> {
             log.info("Creating user: {}.", request.name);
             return userEntityRef(request.userId).ask(new UserCommand.CreateUser(request))
-                .thenApply(ack -> Done.getInstance());
+                    .thenApply(ack -> Done.getInstance());
         };
     }
 
@@ -54,8 +54,10 @@ public class UserServiceImpl implements UserService {
         return (req) -> {
             CompletionStage<PSequence<User>> result
                     = db.selectAll("SELECT * FROM user").thenApply(rows -> {
-                List<User> list = rows.stream().map(r -> new User(r.getString("userId"),
-                        r.getString("groupId"), r.getString("name"))).collect(Collectors.toList());
+                List<User> list = rows.stream().map(r -> new User(
+                        r.getString("userId"),
+                        r.getString("name"))).collect(Collectors.toList()
+                );
                 return TreePVector.from(list);
             });
 

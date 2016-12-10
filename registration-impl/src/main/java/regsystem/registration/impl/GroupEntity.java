@@ -38,7 +38,7 @@ public class GroupEntity extends PersistentEntity<RegistrationCommand, Registrat
                     if (state().group.isPresent()) {
                         if (state().group.get().capacity > 0) {
                             RegistrationEvent.UserRegistered event = new RegistrationEvent.UserRegistered(
-                                    new User(cmd.user.userId, state().group.get().groupId, cmd.user.name), state().group.get());
+                                    new User(cmd.user.userId, cmd.user.name), state().group.get());
                             return ctx.thenPersist(event, evt -> ctx.reply(Done.getInstance()));
                         } else {
                             ctx.invalidCommand("Capacity of group " + entityId() + " is full");

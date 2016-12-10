@@ -59,12 +59,12 @@ public class UserEventProcessor extends ReadSideProcessor<UserEvent> {
     private CompletionStage<Done> prepareCreateTables() {
         return session.executeCreateTable(
                 "CREATE TABLE IF NOT EXISTS user ("
-                        + "userId text, groupId text, name text,"
+                        + "userId text, name text,"
                         + "PRIMARY KEY (userId))");
     }
 
     private CompletionStage<Done> prepareWriteUser() {
-        return session.prepare("INSERT INTO user (userId, groupId, name) VALUES (?, ?, ?)").thenApply(ps -> {
+        return session.prepare("INSERT INTO user (userId, name) VALUES (?, ?)").thenApply(ps -> {
             setWriteUser(ps);
             log.info("User write prepared statement - OK");
             return Done.getInstance();
@@ -74,7 +74,6 @@ public class UserEventProcessor extends ReadSideProcessor<UserEvent> {
     private CompletionStage<List<BoundStatement>> processUserCreated(UserEvent.UserCreated event) {
         BoundStatement bindCreateUser = writeUser.bind();
         bindCreateUser.setString("userId", event.userId);
-        bindCreateUser.setString("groupId", event.groupId);
         bindCreateUser.setString("name", event.name);
         log.info("Persisted user {}", event.name);
         return completedStatement(bindCreateUser);

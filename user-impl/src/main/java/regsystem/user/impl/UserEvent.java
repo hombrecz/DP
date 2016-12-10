@@ -27,13 +27,11 @@ public interface UserEvent extends Jsonable, AggregateEvent<UserEvent> {
     @JsonDeserialize
     public class UserCreated implements UserEvent {
         public final String userId;
-        public final String groupId;
         public final String name;
 
         @JsonCreator
-        public UserCreated(String userId, String groupId, String name) {
+        public UserCreated(String userId, String name) {
             this.userId = Preconditions.checkNotNull(userId, "userId is null");
-            this.groupId = Preconditions.checkNotNull(groupId, "groupId is null");
             this.name = Preconditions.checkNotNull(name, "name is null");
         }
 
@@ -46,7 +44,6 @@ public interface UserEvent extends Jsonable, AggregateEvent<UserEvent> {
 
         private boolean equalTo(UserCreated another) {
             return userId.equals(another.userId)
-                    && groupId.equals(another.groupId)
                     && name.equals(another.name);
         }
 
@@ -54,7 +51,6 @@ public interface UserEvent extends Jsonable, AggregateEvent<UserEvent> {
         public int hashCode() {
             int h = 31;
             h = h * 17 + userId.hashCode();
-            h = h * 17 + groupId.hashCode();
             h = h * 17 + name.hashCode();
             return h;
         }
@@ -63,7 +59,6 @@ public interface UserEvent extends Jsonable, AggregateEvent<UserEvent> {
         public String toString() {
             return MoreObjects.toStringHelper("UserCreated")
                     .add("userId", userId)
-                    .add("groupId", groupId)
                     .add("name", name)
                     .toString();
         }

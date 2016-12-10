@@ -18,13 +18,10 @@ public final class User {
 
     public final String userId;
 
-    public final String groupId;
-
     public final String name;
 
-    public User(String userId, String groupId, String name) {
+    public User(String userId, String name) {
         this.userId = Preconditions.checkNotNull(userId, "userId is null");
-        this.groupId = Preconditions.checkNotNull(groupId, "groupId is null");
         this.name = Preconditions.checkNotNull(name, "name is null");
     }
 
@@ -37,7 +34,6 @@ public final class User {
 
     private boolean equalTo(User another) {
         return userId.equals(another.userId)
-                && groupId.equals(another.groupId)
                 && name.equals(another.name);
     }
 
@@ -46,7 +42,6 @@ public final class User {
         int h = 31;
         h = h * 17 + userId.hashCode();
         h = h * 17 + name.hashCode();
-        h = h * 17 + groupId.hashCode();
         return h;
     }
 
@@ -54,7 +49,6 @@ public final class User {
     public String toString() {
         return MoreObjects.toStringHelper("User")
                 .add("userId", userId)
-                .add("groupId", groupId)
                 .add("name", name)
                 .toString();
     }
