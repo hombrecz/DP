@@ -93,4 +93,42 @@ public interface RegistrationCommand extends Jsonable {
                     .toString();
         }
     }
+
+    @SuppressWarnings("serial")
+    @Immutable
+    @JsonDeserialize
+    public final class CheckCapacity implements RegistrationCommand,PersistentEntity.ReplyType<Done> {
+
+        public final User user;
+
+        @JsonCreator
+        public CheckCapacity(User user) {
+            this.user = Preconditions.checkNotNull(user, "user is null");
+        }
+
+        @Override
+        public boolean equals(@Nullable Object another) {
+            if (this == another)
+                return true;
+            return another instanceof CheckCapacity && equalTo((CheckCapacity) another);
+        }
+
+        private boolean equalTo(CheckCapacity another) {
+            return user.equals(another.user);
+        }
+
+        @Override
+        public int hashCode() {
+            int h = 31;
+            h = h * 17 + user.hashCode();
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return MoreObjects.toStringHelper("CheckCapacity")
+                    .add("user", user)
+                    .toString();
+        }
+    }
 }

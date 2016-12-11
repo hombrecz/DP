@@ -16,14 +16,11 @@ import jdk.nashorn.internal.ir.annotations.Immutable;
 @JsonDeserialize
 public final class RegistrationTicket {
 
-    public final String registrationId;
-
     public final String groupId;
 
     public final String userName;
 
     public RegistrationTicket(String registrationId, String groupId, String userName) {
-        this.registrationId = Preconditions.checkNotNull(registrationId, "registrationId is null");
         this.groupId = Preconditions.checkNotNull(groupId, "groupId is null");
         this.userName = Preconditions.checkNotNull(userName, "userName is null");
     }
@@ -36,13 +33,12 @@ public final class RegistrationTicket {
     }
 
     private boolean equalTo(RegistrationTicket another) {
-        return registrationId.equals(another.registrationId) && groupId.equals(another.groupId) && userName.equals(another.userName);
+        return groupId.equals(another.groupId) && userName.equals(another.userName);
     }
 
     @Override
     public int hashCode() {
-        int result = registrationId != null ? registrationId.hashCode() : 0;
-        result = 31 * result + (groupId != null ? groupId.hashCode() : 0);
+        int result = groupId != null ? groupId.hashCode() : 0;
         result = 31 * result + (userName != null ? userName.hashCode() : 0);
         return result;
     }
@@ -50,7 +46,6 @@ public final class RegistrationTicket {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper("Group")
-                .add("registrationId", registrationId)
                 .add("groupId", groupId)
                 .add("userName", userName)
                 .toString();

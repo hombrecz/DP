@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.lightbend.lagom.serialization.CompressedJsonable;
 
+import org.pcollections.PSequence;
+
 import java.util.Optional;
 
 import javax.annotation.Nullable;
@@ -30,10 +32,15 @@ public class GroupState implements CompressedJsonable {
     }
 
     public GroupState registerUser() {
-        Group t = group.get();
-        return new GroupState(Optional.of(new Group(t.groupId, t.groupName,t.capacity - 1, Optional.ofNullable(t.users))));
+        Group group = this.group.get();
+        return new GroupState(Optional.of(new Group(group.groupId, group.groupName,group.capacity - 1, Optional.ofNullable(group.users))));
+    }
 
-
+    public GroupState unregisterUser(String userId) {
+        Group group = this.group.get();
+        PSequence<String> users = group.users;
+        users.minus(userId);
+        return new GroupState(Optional.of(new Group(group.groupId, group.groupName,group.capacity + 1, Optional.ofNullable(users))));
     }
 
     @Override

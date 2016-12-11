@@ -33,7 +33,8 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
     private final CassandraReadSide readSide;
 
     private PreparedStatement writeGroup = null;
-    private PreparedStatement decreaseCapacity = null;
+    private PreparedStatement registerPlayerToGroup = null;
+    private PreparedStatement unregisterPlayerFromGroup = null;
 
     @Inject
     public RegistrationEventProcessor(CassandraSession session, CassandraReadSide readSide) {
@@ -45,8 +46,12 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
         this.writeGroup = writeGroup;
     }
 
-    private void setDecreaseCapacity(PreparedStatement decreaseCapacity) {
-        this.decreaseCapacity = decreaseCapacity;
+    private void setRegisterPlayerToGroup(PreparedStatement registerPlayerToGroup) {
+        this.registerPlayerToGroup = registerPlayerToGroup;
+    }
+
+    private void setUnregisterPlayerFromGroup(PreparedStatement unregisterPlayerFromGroup) {
+        this.unregisterPlayerFromGroup = unregisterPlayerFromGroup;
     }
 
     @Override
@@ -61,6 +66,7 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
                 .setPrepare((ignored) -> prepareStatements())
                 .setEventHandler(RegistrationEvent.GroupCreated.class, this::processGroupCreated)
                 .setEventHandler(RegistrationEvent.UserRegistered.class, this::processUserRegistered)
+                .setEventHandler(RegistrationEvent.UserExceeded.class, this::processUserExceeded)
                 .build();
     }
 
@@ -72,7 +78,9 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
     }
 
     private CompletionStage<Done> prepareStatements() {
-        return prepareWriteGroup().thenCompose(a -> prepareDecreaseCapacity());
+        return prepareWriteGroup()
+                .thenCompose(a -> prepareRegisterPlayerToGroup())
+                .thenCompose(b -> prepareUnregisterPlayerFromGroup());
     }
 
     private CompletionStage<Done> prepareWriteGroup() {
@@ -83,9 +91,16 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
         });
     }
 
-    private CompletionStage<Done> prepareDecreaseCapacity() {
+    private CompletionStage<Done> prepareRegisterPlayerToGroup() {
         return session.prepare("UPDATE group SET capacity = ?, users = users + ? WHERE groupId = ?").thenApply(ps -> {
-            setDecreaseCapacity(ps);
+            setRegisterPlayerToGroup(ps);
+            log.info("Registration decrease capacity prepared statement - OK");
+            return Done.getInstance();
+        });
+    }
+    private CompletionStage<Done> prepareUnregisterPlayerFromGroup() {
+        return session.prepare("UPDATE group SET capacity = ?, users = users - ? WHERE groupId = ?").thenApply(ps -> {
+            setUnregisterPlayerFromGroup(ps);
             log.info("Registration decrease capacity prepared statement - OK");
             return Done.getInstance();
         });
@@ -106,11 +121,23 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
         List<String> registeredUsers = new ArrayList<>();
         registeredUsers.add(event.user.userId);
 
-        BoundStatement bindDecreaseCapacity = decreaseCapacity.bind();
+        BoundStatement bindDecreaseCapacity = registerPlayerToGroup.bind();
         bindDecreaseCapacity.setString("groupId", event.group.groupId);
         bindDecreaseCapacity.setInt("capacity", decreasedCapacity);
         bindDecreaseCapacity.setList("users", registeredUsers);
         log.info("Decreased capacity of group {} to {}, added player {}", event.group.groupName, decreasedCapacity, event.user.name);
+        return completedStatement(bindDecreaseCapacity);
+    }
+    private CompletionStage<List<BoundStatement>> processUserExceeded(RegistrationEvent.UserExceeded event) {
+        Integer increasedCapacity = event.group.capacity + 1;
+        List<String> registeredUsers = new ArrayList<>();
+        registeredUsers.add(event.user.userId);
+
+        BoundStatement bindDecreaseCapacity = unregisterPlayerFromGroup.bind();
+        bindDecreaseCapacity.setString("groupId", event.group.groupId);
+        bindDecreaseCapacity.setInt("capacity", increasedCapacity);
+        bindDecreaseCapacity.setList("users", registeredUsers);
+        log.info("Increased capacity of group {} to {}, removed player {}", event.group.groupName, increasedCapacity, event.user.name);
         return completedStatement(bindDecreaseCapacity);
     }
 }

@@ -103,7 +103,8 @@ public interface RegistrationEvent extends Jsonable, AggregateEvent<Registration
         }
 
         private boolean equalTo(UserRegistered another) {
-            return user.equals(another.user) && group.equals(another.group);
+            return user.equals(another.user)
+                    && group.equals(another.group);
         }
 
         @Override
@@ -117,6 +118,94 @@ public interface RegistrationEvent extends Jsonable, AggregateEvent<Registration
         @Override
         public String toString() {
             return MoreObjects.toStringHelper("UserRegistered")
+                    .add("user", user)
+                    .add("group", group)
+                    .toString();
+        }
+    }
+
+    @SuppressWarnings("serial")
+    @Immutable
+    @JsonDeserialize
+    public final class UserAccepted implements RegistrationEvent {
+        public final User user;
+
+        public final Group group;
+
+        @JsonCreator
+        public UserAccepted(User user, Group group) {
+
+            this.user = Preconditions.checkNotNull(user, "user is null");
+            this.group = Preconditions.checkNotNull(group, "group is null");
+        }
+
+        @Override
+        public boolean equals(@Nullable Object another) {
+            if (this == another)
+                return true;
+            return another instanceof UserAccepted && equalTo((UserAccepted) another);
+        }
+
+        private boolean equalTo(UserAccepted another) {
+            return user.equals(another.user)
+                    && group.equals(another.group);
+        }
+
+        @Override
+        public int hashCode() {
+            int h = 31;
+            h = h * 17 + user.hashCode();
+            h = h * 17 + group.hashCode();
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return MoreObjects.toStringHelper("UserAccepted")
+                    .add("user", user)
+                    .add("group", group)
+                    .toString();
+        }
+    }
+
+    @SuppressWarnings("serial")
+    @Immutable
+    @JsonDeserialize
+    public final class UserExceeded implements RegistrationEvent {
+        public final User user;
+
+        public final Group group;
+
+        @JsonCreator
+        public UserExceeded(User user, Group group) {
+
+            this.user = Preconditions.checkNotNull(user, "user is null");
+            this.group = Preconditions.checkNotNull(group, "group is null");
+        }
+
+        @Override
+        public boolean equals(@Nullable Object another) {
+            if (this == another)
+                return true;
+            return another instanceof UserExceeded && equalTo((UserExceeded) another);
+        }
+
+        private boolean equalTo(UserExceeded another) {
+            return user.equals(another.user)
+                    && group.equals(another.group);
+        }
+
+        @Override
+        public int hashCode() {
+            int h = 31;
+            h = h * 17 + user.hashCode();
+            h = h * 17 + group.hashCode();
+            return h;
+        }
+
+        @Override
+        public String toString() {
+            return MoreObjects.toStringHelper("UserExceeded")
                     .add("user", user)
                     .add("group", group)
                     .toString();

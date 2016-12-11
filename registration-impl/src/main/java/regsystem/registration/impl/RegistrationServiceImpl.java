@@ -54,7 +54,8 @@ public class RegistrationServiceImpl implements RegistrationService {
             PersistentEntityRef<RegistrationCommand> groupEntity = groupEntityRef(request.groupId);
             User user = new User(UUID.randomUUID().toString().replaceAll("-", ""), request.userName);
             final CompletionStage<Done> registerToGroup = groupEntity.ask(new RegistrationCommand.RegisterUser(user));
-            return registerToGroup.thenCompose(group -> userService.createUser().invoke(user));
+            final CompletionStage<Done> checkCapacity = groupEntity.ask(new RegistrationCommand.CheckCapacity(user));
+            return registerToGroup.thenCompose(afterRegistration -> checkCapacity).thenCompose(checked -> userService.createUser().invoke(user));
         };
     }
 
