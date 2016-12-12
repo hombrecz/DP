@@ -32,11 +32,15 @@ lazy val registrationApi = project("registration-api")
 lazy val registrationImpl = project("registration-impl")
   .settings(version := "1.0-SNAPSHOT")
   .enablePlugins(LagomJava)
+  .enablePlugins(GatlingPlugin)
   .dependsOn(registrationApi, userApi)
   .settings(
     libraryDependencies ++= Seq(
       lagomJavadslPersistenceCassandra,
       lagomJavadslTestKit
+      lagomJavadslTestKit,
+      "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.2.3" % "test",
+      "io.gatling"            % "gatling-test-framework"    % "2.2.3" % "test"
     ),
     javacOptions ++= Seq("-encoding", "UTF-8")
   )
@@ -45,7 +49,6 @@ def project(id: String) = Project(id, base = file(id))
   .settings(eclipseSettings: _*)
   .settings(javacOptions in compile ++= Seq("-encoding", "UTF-8", "-source", "1.8", "-target", "1.8", "-Xlint:unchecked", "-Xlint:deprecation"))
   .settings(jacksonParameterNamesJavacSettings: _*) // applying it to every project even if not strictly needed.
-
 
 // See https://github.com/FasterXML/jackson-module-parameter-names
 lazy val jacksonParameterNamesJavacSettings = Seq(
