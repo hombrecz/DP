@@ -37,7 +37,6 @@ lazy val registrationImpl = project("registration-impl")
   .settings(
     libraryDependencies ++= Seq(
       lagomJavadslPersistenceCassandra,
-      lagomJavadslTestKit
       lagomJavadslTestKit,
       "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.2.3" % "test",
       "io.gatling"            % "gatling-test-framework"    % "2.2.3" % "test"

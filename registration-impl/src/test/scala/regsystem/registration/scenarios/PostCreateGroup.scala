@@ -13,7 +13,7 @@ object PostCreateGroup {
   private def newGroup =  s"""{
     "groupId": "alpha",
     "groupName": "Alpha",
-    "capacity": "10",
+    "capacity": "10"
   }"""
 
   val createGroup = exec(

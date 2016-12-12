@@ -20,6 +20,6 @@ class BasicSimulation extends Simulation{
       PostRegisterUser.registerUser
     )
 
-  setUp(scn.inject(rampUsers(10) over (10 seconds)))
+  setUp(scn.inject(rampUsers(1) over (10 seconds)))
     .protocols(httpProtocol)
 }
