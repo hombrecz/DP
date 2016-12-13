@@ -39,7 +39,8 @@ lazy val registrationImpl = project("registration-impl")
       lagomJavadslPersistenceCassandra,
       lagomJavadslTestKit,
       "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.2.3" % "test",
-      "io.gatling"            % "gatling-test-framework"    % "2.2.3" % "test"
+      "io.gatling"            % "gatling-test-framework"    % "2.2.3" % "test",
+      "net.liftweb" % "lift-json_2.10" % "2.5.1"
     ),
     javacOptions ++= Seq("-encoding", "UTF-8")
   )
