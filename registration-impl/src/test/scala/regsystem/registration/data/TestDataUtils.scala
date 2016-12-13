@@ -35,7 +35,7 @@ object TestDataUtils {
 
   private def getRandomCapitalLetter = (Random.nextInt(90 - 65) + 65).toChar
 
-  def randomGroup: Group = Group(
+  def randomGroup: JsonGroup = JsonGroup(
     groupIdFrom(randomGroupName),
     randomGroupName,
     GROUP_CAPACITY
@@ -43,14 +43,14 @@ object TestDataUtils {
 
   private def groupIdFrom(groupName: String) = groupName.toLowerCase.replace(" ", "-")
 
-  def randomUser: User = User(
+  def randomUser: JsonUser = JsonUser(
     groups(Random.nextInt(groups.length)).groupId,
     randomUserName
   )
 
-  val groups: List[Group] = List.fill(GROUP_COUNT)(randomGroup)
+  val groups: List[JsonGroup] = List.fill(GROUP_COUNT)(randomGroup)
 
-  val users: List[User] = List.fill(USER_COUNT)(randomUser)
+  val users: List[JsonUser] = List.fill(USER_COUNT)(randomUser)
 
 }
 

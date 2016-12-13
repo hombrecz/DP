@@ -6,7 +6,7 @@ import io.gatling.core.structure.ScenarioBuilder
 import io.gatling.http.Predef._
 import net.liftweb.json.Serialization
 import regsystem.registration.data.TestDataUtils.{groups, _}
-import regsystem.registration.data.{Group, User}
+import regsystem.registration.data.{JsonGroup, JsonUser}
 
 import scala.util.Random
 
@@ -37,9 +37,9 @@ class BasicSimulation extends Simulation {
     Map("user" -> serializeUser(users(i)))
   }
 
-  private def serializeGroup(group: Group) = Serialization.write(group)
+  private def serializeGroup(group: JsonGroup) = Serialization.write(group)
 
-  private def serializeUser(user: User) = Serialization.write(user)
+  private def serializeUser(user: JsonUser) = Serialization.write(user)
 
   val scn: ScenarioBuilder = scenario("Users registration")
     .feed(groupFeeder.circular)
