@@ -3,7 +3,13 @@ reg-system
 
 Registration system like microservices application build on Lightbend Lagom framework for my diploma thesis.
 
-## Rest end points
+# Running aplication and tests
+
+SBT is used to run application. For starting use "sbt runAll, then the gatling test can be issued with "sbt gatling:test" from another console.
+
+# Rest end points
+
+It is possible to send REST requests to application.
 
 ## API
 
