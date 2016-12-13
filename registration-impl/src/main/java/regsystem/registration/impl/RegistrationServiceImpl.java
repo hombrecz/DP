@@ -75,8 +75,8 @@ public class RegistrationServiceImpl implements RegistrationService {
                     = db.selectAll("SELECT * FROM group").thenApply(rows -> {
                 List<Group> list = rows.stream().map(r -> {
                     Group group = new Group(r.getString("groupId"),
-                            r.getString("groupName"), r.getInt("capacity"), getUsersFromList(r.getList("users",String.class)));
-                    log.info("Returning group: {}",group);
+                            r.getString("groupName"), r.getInt("capacity"), getUsersFromList(r.getList("users", String.class)));
+                    log.info("Returning group: {}", group);
                     return group;
                 }).collect(Collectors.toList());
                 return TreePVector.from(list);

@@ -6,7 +6,10 @@ scalaVersion in ThisBuild := "2.11.7"
 lazy val userApi = project("user-api")
   .settings(
     version := "1.0-SNAPSHOT",
-    libraryDependencies += lagomJavadslApi,
+    libraryDependencies ++= Seq(
+      lagomJavadslApi,
+      "org.projectlombok" % "lombok" % "1.16.12"
+    ),
     javacOptions ++= Seq("-encoding", "UTF-8")
   )
 
@@ -16,7 +19,8 @@ lazy val userImpl = project("user-impl")
     version := "1.0-SNAPSHOT",
     libraryDependencies ++= Seq(
       lagomJavadslPersistenceCassandra,
-      lagomJavadslTestKit
+      lagomJavadslTestKit,
+      "org.projectlombok" % "lombok" % "1.16.12"
     ),
     javacOptions ++= Seq("-encoding", "UTF-8")
   )
@@ -25,7 +29,10 @@ lazy val userImpl = project("user-impl")
 lazy val registrationApi = project("registration-api")
   .settings(version := "1.0-SNAPSHOT")
   .settings(
-    libraryDependencies += lagomJavadslApi,
+    libraryDependencies ++= Seq(
+      lagomJavadslApi,
+      "org.projectlombok" % "lombok" % "1.16.12"
+    ),
     javacOptions ++= Seq("-encoding", "UTF-8")
   )
 
@@ -40,7 +47,8 @@ lazy val registrationImpl = project("registration-impl")
       lagomJavadslTestKit,
       "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.2.3" % "test",
       "io.gatling"            % "gatling-test-framework"    % "2.2.3" % "test",
-      "net.liftweb" % "lift-json_2.10" % "2.5.1"
+      "net.liftweb" % "lift-json_2.10" % "2.5.1",
+      "org.projectlombok" % "lombok" % "1.16.12"
     ),
     javacOptions ++= Seq("-encoding", "UTF-8")
   )

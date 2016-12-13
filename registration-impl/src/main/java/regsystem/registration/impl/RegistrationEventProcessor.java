@@ -98,6 +98,7 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
             return Done.getInstance();
         });
     }
+
     private CompletionStage<Done> prepareUnregisterPlayerFromGroup() {
         return session.prepare("UPDATE group SET capacity = ?, users = users - ? WHERE groupId = ?").thenApply(ps -> {
             setUnregisterPlayerFromGroup(ps);
@@ -128,6 +129,7 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
         log.info("Decreased capacity of group {} to {}, added player {}", event.group.groupName, decreasedCapacity, event.user.name);
         return completedStatement(bindDecreaseCapacity);
     }
+
     private CompletionStage<List<BoundStatement>> processUserExceeded(RegistrationEvent.UserExceeded event) {
         Integer increasedCapacity = event.group.capacity + 1;
         List<String> registeredUsers = new ArrayList<>();
