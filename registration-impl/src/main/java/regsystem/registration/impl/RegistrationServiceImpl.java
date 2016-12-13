@@ -70,24 +70,19 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public ServiceCall<NotUsed, PSequence<Group>> getGroups() {
-        return (req) -> {
-            CompletionStage<PSequence<Group>> result
-                    = db.selectAll("SELECT * FROM group").thenApply(rows -> {
-                List<Group> list = rows.stream().map(r -> {
-                    Group group = new Group(r.getString("groupId"),
-                            r.getString("groupName"), r.getInt("capacity"), getUsersFromList(r.getList("users", String.class)));
-                    log.info("Returning group: {}", group);
-                    return group;
-                }).collect(Collectors.toList());
-                return TreePVector.from(list);
-            });
-            return result;
-        };
+        return req -> db.selectAll("SELECT * FROM group").thenApply(rows -> {
+            List<Group> list = rows.stream().map(r -> {
+                Group group = new Group(r.getString("groupId"), r.getString("groupName"), r.getInt("capacity"),
+                        getUsersFromList(r.getList("users", String.class)));
+                log.info("Returning group: {}", group);
+                return group;
+            }).collect(Collectors.toList());
+            return TreePVector.from(list);
+        });
     }
 
     private PersistentEntityRef<RegistrationCommand> groupEntityRef(String groupId) {
-        PersistentEntityRef<RegistrationCommand> ref = persistentEntityRegistry.refFor(GroupEntity.class, groupId);
-        return ref;
+        return persistentEntityRegistry.refFor(GroupEntity.class, groupId);
     }
 
     private Optional<PSequence<String>> getUsersFromList(List<String> users) {

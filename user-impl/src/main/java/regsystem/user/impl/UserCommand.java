@@ -30,7 +30,7 @@ public interface UserCommand extends Jsonable {
         public final User user;
 
         @JsonCreator
-        public CreateUser(User user) {
+        CreateUser(User user) {
             this.user = Preconditions.checkNotNull(user, "user is null");
         }
     }

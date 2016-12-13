@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -42,7 +41,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ServiceCall<User, Done> createUser() {
-        return (request) -> {
+        return request -> {
             log.info("Creating user: {}.", request.name);
             return userEntityRef(request.userId).ask(new UserCommand.CreateUser(request))
                     .thenApply(ack -> Done.getInstance());
@@ -51,22 +50,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ServiceCall<NotUsed, PSequence<User>> getUsers() {
-        return (req) -> {
-            CompletionStage<PSequence<User>> result
-                    = db.selectAll("SELECT * FROM user").thenApply(rows -> {
-                List<User> list = rows.stream().map(r -> new User(
-                        r.getString("userId"),
-                        r.getString("name"))).collect(Collectors.toList()
-                );
-                return TreePVector.from(list);
-            });
-
-            return result;
-        };
+        return req -> db.selectAll("SELECT * FROM user").thenApply(rows -> {
+            List<User> list = rows.stream().map(r -> new User(
+                    r.getString("userId"),
+                    r.getString("name"))).collect(Collectors.toList()
+            );
+            return TreePVector.from(list);
+        });
     }
 
     private PersistentEntityRef<UserCommand> userEntityRef(String userId) {
-        PersistentEntityRef<UserCommand> ref = persistentEntityRegistry.refFor(UserEntity.class, userId);
-        return ref;
+        return persistentEntityRegistry.refFor(UserEntity.class, userId);
     }
 }

@@ -29,19 +29,19 @@ public class GroupState implements CompressedJsonable {
     public final Optional<Group> group;
 
     @JsonCreator
-    public GroupState(Optional<Group> group) {
+    GroupState(Optional<Group> group) {
         this.group = Preconditions.checkNotNull(group, "group is null");
     }
 
-    public GroupState registerUser() {
+    GroupState registerUser() {
         Group group = this.group.get();
         return new GroupState(Optional.of(new Group(group.groupId, group.groupName, group.capacity - 1, Optional.ofNullable(group.users))));
     }
 
-    public GroupState unregisterUser(String userId) {
+    GroupState unregisterUser(String userId) {
         Group group = this.group.get();
         PSequence<String> users = group.users;
         users.minus(userId);
-        return new GroupState(Optional.of(new Group(group.groupId, group.groupName, group.capacity + 1, Optional.ofNullable(users))));
+        return new GroupState(Optional.of(new Group(group.groupId, group.groupName, group.capacity + 1, Optional.of(users))));
     }
 }

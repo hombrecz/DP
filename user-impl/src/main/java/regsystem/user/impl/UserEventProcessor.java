@@ -43,6 +43,7 @@ public class UserEventProcessor extends ReadSideProcessor<UserEvent> {
         this.writeUser = writeUser;
     }
 
+    @Override
     public PSequence<AggregateEventTag<UserEvent>> aggregateTags() {
         return TreePVector.singleton(UserEventTag.INSTANCE);
     }
@@ -51,7 +52,7 @@ public class UserEventProcessor extends ReadSideProcessor<UserEvent> {
     public ReadSideHandler<UserEvent> buildHandler() {
         return readSide.<UserEvent>builder("user_offset")
                 .setGlobalPrepare(this::prepareCreateTables)
-                .setPrepare((ignored) -> prepareWriteUser())
+                .setPrepare(ignored -> prepareWriteUser())
                 .setEventHandler(UserEvent.UserCreated.class, this::processUserCreated)
                 .build();
     }

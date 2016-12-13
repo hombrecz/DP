@@ -27,7 +27,7 @@ public final class UserState implements CompressedJsonable {
     public final Optional<User> user;
 
     @JsonCreator
-    public UserState(Optional<User> user) {
+    UserState(Optional<User> user) {
         this.user = Preconditions.checkNotNull(user, "user is null");
     }
 }

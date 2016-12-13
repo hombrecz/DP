@@ -26,12 +26,12 @@ public interface RegistrationCommand extends Jsonable {
     @JsonDeserialize
     @ToString
     @EqualsAndHashCode
-    public final class CreateGroup implements RegistrationCommand, CompressedJsonable, PersistentEntity.ReplyType<Done> {
+    final class CreateGroup implements RegistrationCommand, CompressedJsonable, PersistentEntity.ReplyType<Done> {
 
         public final Group group;
 
         @JsonCreator
-        public CreateGroup(Group group) {
+        CreateGroup(Group group) {
             this.group = Preconditions.checkNotNull(group, "group is null");
         }
     }
@@ -41,12 +41,12 @@ public interface RegistrationCommand extends Jsonable {
     @JsonDeserialize
     @ToString
     @EqualsAndHashCode
-    public final class RegisterUser implements RegistrationCommand, CompressedJsonable, PersistentEntity.ReplyType<Done> {
+    final class RegisterUser implements RegistrationCommand, CompressedJsonable, PersistentEntity.ReplyType<Done> {
 
         public final User user;
 
         @JsonCreator
-        public RegisterUser(User user) {
+        RegisterUser(User user) {
             this.user = Preconditions.checkNotNull(user, "user is null");
         }
     }
@@ -56,12 +56,12 @@ public interface RegistrationCommand extends Jsonable {
     @JsonDeserialize
     @ToString
     @EqualsAndHashCode
-    public final class CheckCapacity implements RegistrationCommand, PersistentEntity.ReplyType<Done> {
+    final class CheckCapacity implements RegistrationCommand, PersistentEntity.ReplyType<Done> {
 
         public final User user;
 
         @JsonCreator
-        public CheckCapacity(User user) {
+        CheckCapacity(User user) {
             this.user = Preconditions.checkNotNull(user, "user is null");
         }
     }

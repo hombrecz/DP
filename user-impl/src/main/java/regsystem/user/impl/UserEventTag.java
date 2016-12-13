@@ -5,8 +5,8 @@ import com.lightbend.lagom.javadsl.persistence.AggregateEventTag;
 /**
  * @author ondrej.dlabola(at)morosystems.cz
  */
-public class UserEventTag {
+class UserEventTag {
 
-    public static final AggregateEventTag<UserEvent> INSTANCE =
+    static final AggregateEventTag<UserEvent> INSTANCE =
             AggregateEventTag.of(UserEvent.class);
 }

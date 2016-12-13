@@ -19,7 +19,7 @@ import lombok.ToString;
 public interface UserEvent extends Jsonable, AggregateEvent<UserEvent> {
 
     @Override
-    default public AggregateEventTag<UserEvent> aggregateTag() {
+    default AggregateEventTag<UserEvent> aggregateTag() {
         return UserEventTag.INSTANCE;
     }
 
@@ -28,13 +28,13 @@ public interface UserEvent extends Jsonable, AggregateEvent<UserEvent> {
     @JsonDeserialize
     @ToString
     @EqualsAndHashCode
-    public class UserCreated implements UserEvent {
+    class UserCreated implements UserEvent {
 
         public final String userId;
         public final String name;
 
         @JsonCreator
-        public UserCreated(String userId, String name) {
+        UserCreated(String userId, String name) {
             this.userId = Preconditions.checkNotNull(userId, "userId is null");
             this.name = Preconditions.checkNotNull(name, "name is null");
         }

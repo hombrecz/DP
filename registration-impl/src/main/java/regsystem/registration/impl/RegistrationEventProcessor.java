@@ -63,7 +63,7 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
     public ReadSideHandler<RegistrationEvent> buildHandler() {
         return readSide.<RegistrationEvent>builder("group_offset")
                 .setGlobalPrepare(this::prepareCreateTables)
-                .setPrepare((ignored) -> prepareStatements())
+                .setPrepare(ignored -> prepareStatements())
                 .setEventHandler(RegistrationEvent.GroupCreated.class, this::processGroupCreated)
                 .setEventHandler(RegistrationEvent.UserRegistered.class, this::processUserRegistered)
                 .setEventHandler(RegistrationEvent.UserExceeded.class, this::processUserExceeded)

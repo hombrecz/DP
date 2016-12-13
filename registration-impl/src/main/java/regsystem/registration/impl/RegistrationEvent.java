@@ -35,7 +35,7 @@ public interface RegistrationEvent extends Jsonable, AggregateEvent<Registration
     @JsonDeserialize
     @ToString
     @EqualsAndHashCode
-    public final class GroupCreated implements RegistrationEvent {
+    final class GroupCreated implements RegistrationEvent {
 
         public final String groupId;
         public final String groupName;
@@ -43,7 +43,7 @@ public interface RegistrationEvent extends Jsonable, AggregateEvent<Registration
         public final PSequence<String> users;
 
         @JsonCreator
-        public GroupCreated(String groupId, String groupName, Integer capacity, Optional<PSequence<String>> users) {
+        GroupCreated(String groupId, String groupName, Integer capacity, Optional<PSequence<String>> users) {
 
             this.groupId = Preconditions.checkNotNull(groupId, "groupId is null");
             this.groupName = Preconditions.checkNotNull(groupName, "groupName");
@@ -57,13 +57,13 @@ public interface RegistrationEvent extends Jsonable, AggregateEvent<Registration
     @JsonDeserialize
     @ToString
     @EqualsAndHashCode
-    public final class UserRegistered implements RegistrationEvent {
+    final class UserRegistered implements RegistrationEvent {
 
         public final User user;
         public final Group group;
 
         @JsonCreator
-        public UserRegistered(User user, Group group) {
+        UserRegistered(User user, Group group) {
             this.user = Preconditions.checkNotNull(user, "user is null");
             this.group = Preconditions.checkNotNull(group, "group is null");
         }
@@ -74,13 +74,13 @@ public interface RegistrationEvent extends Jsonable, AggregateEvent<Registration
     @JsonDeserialize
     @ToString
     @EqualsAndHashCode
-    public final class UserAccepted implements RegistrationEvent {
+    final class UserAccepted implements RegistrationEvent {
 
         public final User user;
         public final Group group;
 
         @JsonCreator
-        public UserAccepted(User user, Group group) {
+        UserAccepted(User user, Group group) {
             this.user = Preconditions.checkNotNull(user, "user is null");
             this.group = Preconditions.checkNotNull(group, "group is null");
         }
@@ -91,13 +91,13 @@ public interface RegistrationEvent extends Jsonable, AggregateEvent<Registration
     @JsonDeserialize
     @ToString
     @EqualsAndHashCode
-    public final class UserExceeded implements RegistrationEvent {
+    final class UserExceeded implements RegistrationEvent {
 
         public final User user;
         public final Group group;
 
         @JsonCreator
-        public UserExceeded(User user, Group group) {
+        UserExceeded(User user, Group group) {
             this.user = Preconditions.checkNotNull(user, "user is null");
             this.group = Preconditions.checkNotNull(group, "group is null");
         }

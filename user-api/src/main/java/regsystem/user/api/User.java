@@ -1,6 +1,6 @@
 package regsystem.user.api;
 
-/**
+/*
  * @author ondrej.dlabola(at)morosystems.cz
  */
 import com.google.common.base.Preconditions;
