@@ -13,9 +13,6 @@ import akka.NotUsed;
 import static com.lightbend.lagom.javadsl.api.Service.named;
 import static com.lightbend.lagom.javadsl.api.Service.restCall;
 
-/**
- * @author ondrej.dlabola(at)morosystems.cz
- */
 public interface RegistrationService extends Service {
 
     ServiceCall<RegistrationTicket, Done> registerUser();

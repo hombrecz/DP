@@ -7,9 +7,6 @@ import java.util.Optional;
 import akka.Done;
 import regsystem.user.api.User;
 
-/**
- * @author ondrej.dlabola(at)morosystems.cz
- */
 public class UserEntity extends PersistentEntity<UserCommand, UserEvent, UserState> {
 
     @Override

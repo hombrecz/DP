@@ -4,9 +4,6 @@ import com.typesafe.config.ConfigFactory
 
 import scala.util.Random
 
-/**
-  * @author ondrej.dlabola(at)morosystems.cz
-  */
 object TestDataUtils {
 
   private[this] val config = ConfigFactory.load()

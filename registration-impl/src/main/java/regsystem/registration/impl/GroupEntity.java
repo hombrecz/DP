@@ -14,9 +14,6 @@ import regsystem.user.api.User;
 import static regsystem.registration.impl.RegistrationCommand.*;
 import static regsystem.registration.impl.RegistrationEvent.*;
 
-/**
- * @author ondrej.dlabola(at)morosystems.cz
- */
 public class GroupEntity extends PersistentEntity<RegistrationCommand, RegistrationEvent, GroupState> {
 
     private final Logger log = LoggerFactory.getLogger(GroupEntity.class);

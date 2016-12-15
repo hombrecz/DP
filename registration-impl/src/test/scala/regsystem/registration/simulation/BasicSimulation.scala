@@ -10,9 +10,6 @@ import regsystem.registration.data.{JsonGroup, JsonUser}
 
 import scala.util.Random
 
-/**
-  * @author ondrej.dlabola(at)morosystems.cz
-  */
 class BasicSimulation extends Simulation {
 
   private[this] val config = ConfigFactory.load()

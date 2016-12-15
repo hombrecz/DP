@@ -13,9 +13,6 @@ import javax.annotation.concurrent.Immutable;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-/**
- * @author ondrej.dlabola(at)morosystems.cz
- */
 public interface UserEvent extends Jsonable, AggregateEvent<UserEvent> {
 
     @Override

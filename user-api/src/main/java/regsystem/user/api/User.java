@@ -1,8 +1,5 @@
 package regsystem.user.api;
 
-/*
- * @author ondrej.dlabola(at)morosystems.cz
- */
 import com.google.common.base.Preconditions;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

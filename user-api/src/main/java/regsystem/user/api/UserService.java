@@ -14,9 +14,6 @@ import static com.lightbend.lagom.javadsl.api.Service.named;
 import static com.lightbend.lagom.javadsl.api.Service.namedCall;
 import static com.lightbend.lagom.javadsl.api.Service.restCall;
 
-/**
- * @author ondrej.dlabola(at)morosystems.cz
- */
 public interface UserService extends Service {
 
     ServiceCall<User, Done> createUser();

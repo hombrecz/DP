@@ -6,9 +6,6 @@ import com.lightbend.lagom.javadsl.server.ServiceGuiceSupport;
 
 import regsystem.user.api.UserService;
 
-/**
- * @author ondrej.dlabola(at)morosystems.cz
- */
 public class UserModule extends AbstractModule implements ServiceGuiceSupport {
 
     @Override

@@ -16,9 +16,6 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import regsystem.registration.api.Group;
 
-/**
- * @author ondrej.dlabola(at)morosystems.cz
- */
 @SuppressWarnings("serial")
 @Immutable
 @JsonDeserialize

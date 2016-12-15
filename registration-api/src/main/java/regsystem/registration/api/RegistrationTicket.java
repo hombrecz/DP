@@ -8,9 +8,6 @@ import jdk.nashorn.internal.ir.annotations.Immutable;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-/**
- * @author ondrej.dlabola(at)morosystems.cz
- */
 @Immutable
 @JsonDeserialize
 @ToString

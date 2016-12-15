@@ -22,9 +22,6 @@ import akka.Done;
 
 import static com.lightbend.lagom.javadsl.persistence.cassandra.CassandraReadSide.completedStatement;
 
-/**
- * @author ondrej.dlabola(at)morosystems.cz
- */
 public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEvent> {
 
     private final Logger log = LoggerFactory.getLogger(RegistrationEventProcessor.class);

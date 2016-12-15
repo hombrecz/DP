@@ -21,9 +21,6 @@ import akka.NotUsed;
 import regsystem.user.api.User;
 import regsystem.user.api.UserService;
 
-/**
- * @author ondrej.dlabola(at)morosystems.cz
- */
 public class UserServiceImpl implements UserService {
 
     private final PersistentEntityRegistry persistentEntityRegistry;

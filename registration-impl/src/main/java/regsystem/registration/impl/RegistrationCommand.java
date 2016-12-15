@@ -16,9 +16,6 @@ import lombok.ToString;
 import regsystem.registration.api.Group;
 import regsystem.user.api.User;
 
-/**
- * @author ondrej.dlabola(at)morosystems.cz
- */
 public interface RegistrationCommand extends Jsonable {
 
     @SuppressWarnings("serial")
