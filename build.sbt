@@ -39,16 +39,24 @@ lazy val registrationApi = project("registration-api")
 lazy val registrationImpl = project("registration-impl")
   .settings(version := "1.0-SNAPSHOT")
   .enablePlugins(LagomJava)
-  .enablePlugins(GatlingPlugin)
   .dependsOn(registrationApi, userApi)
   .settings(
     libraryDependencies ++= Seq(
       lagomJavadslPersistenceCassandra,
       lagomJavadslTestKit,
-      "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.2.3" % "test",
-      "io.gatling"            % "gatling-test-framework"    % "2.2.3" % "test",
-      "net.liftweb" % "lift-json_2.10" % "2.5.1",
       "org.projectlombok" % "lombok" % "1.16.12"
+    ),
+    javacOptions ++= Seq("-encoding", "UTF-8")
+  )
+
+lazy val performanceTests = project("performance-tests")
+  .settings(version := "1.0-SNAPSHOT")
+  .enablePlugins(GatlingPlugin)
+  .settings(
+    libraryDependencies ++= Seq(
+      "net.liftweb" % "lift-json_2.10" % "2.5.1",
+      "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.2.3" % "test",
+      "io.gatling"            % "gatling-test-framework"    % "2.2.3" % "test"
     ),
     javacOptions ++= Seq("-encoding", "UTF-8")
   )
