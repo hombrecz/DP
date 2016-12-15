@@ -21,13 +21,13 @@ public class UserEntity extends PersistentEntity<UserCommand, UserEvent, UserSta
                 return ctx.done();
             } else {
                 User user = cmd.user;
-                UserEvent event = new UserEvent.UserCreated(user.userId, user.name);
+                UserEvent event = new UserEvent.UserCreated(user.id, user.name);
                 return ctx.thenPersist(event, evt -> ctx.reply(Done.getInstance()));
             }
         });
 
         builder.setEventHandler(UserEvent.UserCreated.class,
-                evt -> new UserState(Optional.of(new User(evt.userId, evt.name))));
+                evt -> new UserState(Optional.of(new User(evt.id, evt.name))));
 
         return builder.build();
     }

@@ -19,14 +19,15 @@ import lombok.ToString;
 @EqualsAndHashCode
 public final class Group {
 
-    public final String groupId;
-    public final String groupName;
+    //String id contains UUID
+    public final String id;
+    public final String name;
     public final PSequence<String> users;
     public final Integer capacity;
 
-    public Group(String groupId, String groupName, Integer capacity, Optional<PSequence<String>> users) {
-        this.groupId = Preconditions.checkNotNull(groupId, "groupId is null");
-        this.groupName = Preconditions.checkNotNull(groupName, "groupName is null");
+    public Group(String id, String name, Integer capacity, Optional<PSequence<String>> users) {
+        this.id = Preconditions.checkNotNull(id, "id is null");
+        this.name = Preconditions.checkNotNull(name, "name is null");
         this.users = users.orElse(TreePVector.empty());
         this.capacity = Preconditions.checkNotNull(capacity, "capacity is null");
     }

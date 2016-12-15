@@ -34,16 +34,16 @@ public interface RegistrationEvent extends Jsonable, AggregateEvent<Registration
     @EqualsAndHashCode
     final class GroupCreated implements RegistrationEvent {
 
-        public final String groupId;
-        public final String groupName;
+        public final String id;
+        public final String name;
         public final Integer capacity;
         public final PSequence<String> users;
 
         @JsonCreator
-        GroupCreated(String groupId, String groupName, Integer capacity, Optional<PSequence<String>> users) {
+        GroupCreated(String id, String name, Integer capacity, Optional<PSequence<String>> users) {
 
-            this.groupId = Preconditions.checkNotNull(groupId, "groupId is null");
-            this.groupName = Preconditions.checkNotNull(groupName, "groupName");
+            this.id = Preconditions.checkNotNull(id, "id is null");
+            this.name = Preconditions.checkNotNull(name, "name");
             this.capacity = Preconditions.checkNotNull(capacity, "capacity");
             this.users = users.orElse(TreePVector.empty());
         }

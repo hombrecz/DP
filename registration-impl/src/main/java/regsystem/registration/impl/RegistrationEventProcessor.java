@@ -70,8 +70,8 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
     private CompletionStage<Done> prepareCreateTables() {
         return session.executeCreateTable(
                 "CREATE TABLE IF NOT EXISTS group ("
-                        + "groupId text, groupName text, capacity int, users list<text>,"
-                        + "PRIMARY KEY (groupId))");
+                        + "id text, name text, capacity int, users list<text>,"
+                        + "PRIMARY KEY (id))");
     }
 
     private CompletionStage<Done> prepareStatements() {
@@ -81,7 +81,7 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
     }
 
     private CompletionStage<Done> prepareWriteGroup() {
-        return session.prepare("INSERT INTO group (groupId, groupName, capacity, users) VALUES (?, ?, ?, ?)").thenApply(ps -> {
+        return session.prepare("INSERT INTO group (id, name, capacity, users) VALUES (?, ?, ?, ?)").thenApply(ps -> {
             setWriteGroup(ps);
             log.info("Registration write group prepared statement - OK");
             return Done.getInstance();
@@ -89,7 +89,7 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
     }
 
     private CompletionStage<Done> prepareRegisterPlayerToGroup() {
-        return session.prepare("UPDATE group SET capacity = ?, users = users + ? WHERE groupId = ?").thenApply(ps -> {
+        return session.prepare("UPDATE group SET capacity = ?, users = users + ? WHERE id = ?").thenApply(ps -> {
             setRegisterPlayerToGroup(ps);
             log.info("Registration decrease capacity prepared statement - OK");
             return Done.getInstance();
@@ -97,7 +97,7 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
     }
 
     private CompletionStage<Done> prepareUnregisterPlayerFromGroup() {
-        return session.prepare("UPDATE group SET capacity = ?, users = users - ? WHERE groupId = ?").thenApply(ps -> {
+        return session.prepare("UPDATE group SET capacity = ?, users = users - ? WHERE id = ?").thenApply(ps -> {
             setUnregisterPlayerFromGroup(ps);
             log.info("Registration decrease capacity prepared statement - OK");
             return Done.getInstance();
@@ -106,37 +106,37 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
 
     private CompletionStage<List<BoundStatement>> processGroupCreated(RegistrationEvent.GroupCreated event) {
         BoundStatement bindWriteGroup = writeGroup.bind();
-        bindWriteGroup.setString("groupId", event.groupId);
-        bindWriteGroup.setString("groupName", event.groupName);
+        bindWriteGroup.setString("id", event.id);
+        bindWriteGroup.setString("name", event.name);
         bindWriteGroup.setInt("capacity", event.capacity);
         bindWriteGroup.setList("users", event.users);
-        log.info("Persisted group {}", event.groupName);
+        log.info("Persisted group {}", event.name);
         return completedStatement(bindWriteGroup);
     }
 
     private CompletionStage<List<BoundStatement>> processUserRegistered(RegistrationEvent.UserRegistered event) {
         Integer decreasedCapacity = event.group.capacity - 1;
         List<String> registeredUsers = new ArrayList<>();
-        registeredUsers.add(event.user.userId);
+        registeredUsers.add(event.user.id);
 
         BoundStatement bindDecreaseCapacity = registerPlayerToGroup.bind();
-        bindDecreaseCapacity.setString("groupId", event.group.groupId);
+        bindDecreaseCapacity.setString("id", event.group.id);
         bindDecreaseCapacity.setInt("capacity", decreasedCapacity);
         bindDecreaseCapacity.setList("users", registeredUsers);
-        log.info("Decreased capacity of group {} to {}, added player {}", event.group.groupName, decreasedCapacity, event.user.name);
+        log.info("Decreased capacity of group {} to {}, added player {}", event.group.name, decreasedCapacity, event.user.name);
         return completedStatement(bindDecreaseCapacity);
     }
 
     private CompletionStage<List<BoundStatement>> processUserExceeded(RegistrationEvent.UserExceeded event) {
         Integer increasedCapacity = event.group.capacity + 1;
         List<String> registeredUsers = new ArrayList<>();
-        registeredUsers.add(event.user.userId);
+        registeredUsers.add(event.user.id);
 
         BoundStatement bindDecreaseCapacity = unregisterPlayerFromGroup.bind();
-        bindDecreaseCapacity.setString("groupId", event.group.groupId);
+        bindDecreaseCapacity.setString("id", event.group.id);
         bindDecreaseCapacity.setInt("capacity", increasedCapacity);
         bindDecreaseCapacity.setList("users", registeredUsers);
-        log.info("Increased capacity of group {} to {}, removed player {}", event.group.groupName, increasedCapacity, event.user.name);
+        log.info("Increased capacity of group {} to {}, removed player {}", event.group.name, increasedCapacity, event.user.name);
         return completedStatement(bindDecreaseCapacity);
     }
 }

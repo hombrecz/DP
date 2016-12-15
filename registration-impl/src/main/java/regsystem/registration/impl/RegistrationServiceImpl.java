@@ -49,7 +49,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     public ServiceCall<RegistrationTicket, Done> registerUser() {
         return request -> {
             PersistentEntityRef<RegistrationCommand> groupEntity = groupEntityRef(request.groupId);
-            User user = new User(UUID.randomUUID().toString().replaceAll("-", ""), request.userName);
+            User user = new User(UUID.randomUUID().toString(), request.userName);
             final CompletionStage<Done> registerToGroup = groupEntity.ask(new RegistrationCommand.RegisterUser(user));
             final CompletionStage<Done> checkCapacity = groupEntity.ask(new RegistrationCommand.CheckCapacity(user));
             return registerToGroup.thenCompose(afterRegistration -> checkCapacity).thenCompose(checked -> userService.createUser().invoke(user));
@@ -59,8 +59,8 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public ServiceCall<Group, Done> createGroup() {
         return request -> {
-            log.info("Creating group: {}.", request.groupName);
-            return groupEntityRef(request.groupId).ask(new RegistrationCommand.CreateGroup(request))
+            log.info("Creating group: {}.", request.name);
+            return groupEntityRef(request.id).ask(new RegistrationCommand.CreateGroup(request))
                     .thenApply(ack -> Done.getInstance());
         };
     }
@@ -69,7 +69,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     public ServiceCall<NotUsed, PSequence<Group>> getGroups() {
         return req -> db.selectAll("SELECT * FROM group").thenApply(rows -> {
             List<Group> list = rows.stream().map(r -> {
-                Group group = new Group(r.getString("groupId"), r.getString("groupName"), r.getInt("capacity"),
+                Group group = new Group(r.getString("id"), r.getString("name"), r.getInt("capacity"),
                         getUsersFromList(r.getList("users", String.class)));
                 log.info("Returning group: {}", group);
                 return group;
@@ -78,8 +78,8 @@ public class RegistrationServiceImpl implements RegistrationService {
         });
     }
 
-    private PersistentEntityRef<RegistrationCommand> groupEntityRef(String groupId) {
-        return persistentEntityRegistry.refFor(GroupEntity.class, groupId);
+    private PersistentEntityRef<RegistrationCommand> groupEntityRef(String id) {
+        return persistentEntityRegistry.refFor(GroupEntity.class, id);
     }
 
     private Optional<PSequence<String>> getUsersFromList(List<String> users) {

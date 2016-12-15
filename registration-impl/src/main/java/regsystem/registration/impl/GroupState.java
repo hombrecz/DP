@@ -32,13 +32,13 @@ public class GroupState implements CompressedJsonable {
 
     GroupState registerUser() {
         Group group = this.group.get();
-        return new GroupState(Optional.of(new Group(group.groupId, group.groupName, group.capacity - 1, Optional.ofNullable(group.users))));
+        return new GroupState(Optional.of(new Group(group.id, group.name, group.capacity - 1, Optional.ofNullable(group.users))));
     }
 
-    GroupState unregisterUser(String userId) {
+    GroupState unregisterUser(String id) {
         Group group = this.group.get();
         PSequence<String> users = group.users;
-        users.minus(userId);
-        return new GroupState(Optional.of(new Group(group.groupId, group.groupName, group.capacity + 1, Optional.of(users))));
+        users.minus(id);
+        return new GroupState(Optional.of(new Group(group.id, group.name, group.capacity + 1, Optional.of(users))));
     }
 }

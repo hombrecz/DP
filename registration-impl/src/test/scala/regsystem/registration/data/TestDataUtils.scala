@@ -41,7 +41,7 @@ object TestDataUtils {
   private def groupIdFrom(groupName: String) = groupName.toLowerCase.replace(" ", "-")
 
   def randomUser: JsonUser = JsonUser(
-    groups(Random.nextInt(groups.length)).groupId,
+    groups(Random.nextInt(groups.length)).id,
     randomUserName
   )
 

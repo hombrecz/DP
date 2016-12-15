@@ -27,12 +27,12 @@ public interface UserEvent extends Jsonable, AggregateEvent<UserEvent> {
     @EqualsAndHashCode
     class UserCreated implements UserEvent {
 
-        public final String userId;
+        public final String id;
         public final String name;
 
         @JsonCreator
-        UserCreated(String userId, String name) {
-            this.userId = Preconditions.checkNotNull(userId, "userId is null");
+        UserCreated(String id, String name) {
+            this.id = Preconditions.checkNotNull(id, "id is null");
             this.name = Preconditions.checkNotNull(name, "name is null");
         }
     }

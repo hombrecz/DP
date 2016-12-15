@@ -30,20 +30,20 @@ public class GroupEntity extends PersistentEntity<RegistrationCommand, Registrat
                 return ctx.done();
             } else {
                 Group group = cmd.group;
-                GroupCreated event = new GroupCreated(group.groupId, group.groupName, group.capacity, Optional.empty());
+                GroupCreated event = new GroupCreated(group.id, group.name, group.capacity, Optional.empty());
                 return ctx.thenPersist(event, evt -> ctx.reply(Done.getInstance()));
             }
         });
 
         builder.setEventHandler(GroupCreated.class,
-                evt -> new GroupState(Optional.of(new Group(evt.groupId, evt.groupName, evt.capacity, Optional.empty()))));
+                evt -> new GroupState(Optional.of(new Group(evt.id, evt.name, evt.capacity, Optional.empty()))));
 
         builder.setCommandHandler(RegisterUser.class,
                 (cmd, ctx) -> {
                     if (state().group.isPresent()) {
                         if (state().group.get().capacity > 0) {
                             UserRegistered event = new UserRegistered(
-                                    new User(cmd.user.userId, cmd.user.name), state().group.get());
+                                    new User(cmd.user.id, cmd.user.name), state().group.get());
                             return ctx.thenPersist(event, evt -> ctx.reply(Done.getInstance()));
                         } else {
                             ctx.invalidCommand("Capacity of group " + entityId() + " is full");
@@ -63,14 +63,14 @@ public class GroupEntity extends PersistentEntity<RegistrationCommand, Registrat
                 (cmd, ctx) -> {
                     if (state().group.isPresent()) {
                         if (state().group.get().capacity >= 0) {
-                            log.info("Capacity of group {} is enough.", state().group.get().groupName);
+                            log.info("Capacity of group {} is enough.", state().group.get().name);
                             UserAccepted event = new UserAccepted(
-                                    new User(cmd.user.userId, cmd.user.name), state().group.get());
+                                    new User(cmd.user.id, cmd.user.name), state().group.get());
                             return ctx.thenPersist(event, evt -> ctx.reply(Done.getInstance()));
                         } else {
                             UserExceeded event = new UserExceeded(
-                                    new User(cmd.user.userId, cmd.user.name), state().group.get());
-                            String message = "Capacity of group " + state().group.get().groupName + " has been exceeded. Performing correction.";
+                                    new User(cmd.user.id, cmd.user.name), state().group.get());
+                            String message = "Capacity of group " + state().group.get().name + " has been exceeded. Performing correction.";
                             return ctx.thenPersist(event, evt -> ctx.invalidCommand(message));
                         }
                     } else {
@@ -81,7 +81,7 @@ public class GroupEntity extends PersistentEntity<RegistrationCommand, Registrat
         );
 
         builder.setEventHandler(UserExceeded.class,
-                evt -> state().unregisterUser(evt.user.userId));
+                evt -> state().unregisterUser(evt.user.id));
 
         builder.setEventHandler(UserAccepted.class,
                 evt -> state());

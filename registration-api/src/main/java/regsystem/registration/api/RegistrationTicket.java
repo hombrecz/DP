@@ -18,7 +18,7 @@ public final class RegistrationTicket {
     public final String userName;
 
     public RegistrationTicket(String groupId, String userName) {
-        this.groupId = Preconditions.checkNotNull(groupId, "groupId is null");
+        this.groupId = Preconditions.checkNotNull(groupId, "id is null");
         this.userName = Preconditions.checkNotNull(userName, "userName is null");
     }
 }

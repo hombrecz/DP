@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
     public ServiceCall<User, Done> createUser() {
         return request -> {
             log.info("Creating user: {}.", request.name);
-            return userEntityRef(request.userId).ask(new UserCommand.CreateUser(request))
+            return userEntityRef(request.id).ask(new UserCommand.CreateUser(request))
                     .thenApply(ack -> Done.getInstance());
         };
     }
@@ -49,14 +49,14 @@ public class UserServiceImpl implements UserService {
     public ServiceCall<NotUsed, PSequence<User>> getUsers() {
         return req -> db.selectAll("SELECT * FROM user").thenApply(rows -> {
             List<User> list = rows.stream().map(r -> new User(
-                    r.getString("userId"),
+                    r.getString("id"),
                     r.getString("name"))).collect(Collectors.toList()
             );
             return TreePVector.from(list);
         });
     }
 
-    private PersistentEntityRef<UserCommand> userEntityRef(String userId) {
-        return persistentEntityRegistry.refFor(UserEntity.class, userId);
+    private PersistentEntityRef<UserCommand> userEntityRef(String id) {
+        return persistentEntityRegistry.refFor(UserEntity.class, id);
     }
 }

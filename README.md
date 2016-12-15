@@ -15,15 +15,15 @@ It is possible to send REST requests to application.
 
 ### create group
 
-`curl 'http://localhost:9000/api/groups' -X POST -d '{"groupId":"alpha2", "groupName":"Alpha-2", "capacity":"30"}' -H 'Content-Type: application/json'`
+`curl 'http://localhost:9000/api/groups' -X POST -d '{"id":"alpha2", "name":"Alpha-2", "capacity":"30"}' -H 'Content-Type: application/json'`
 + POST /api/groups
-+ BODY `{"groupId":"alpha2", "groupName":"Alpha-2", "capacity":"30"}`
++ BODY `{"id":"alpha2", "name":"Alpha-2", "capacity":"30"}`
 
 ### register user
 
-`curl 'http://localhost:9000/api/registration' -X POST -d '{"registrationId":"whatever", "groupId":"alpha1", "userName":"John"}' -H 'Content-Type: application/json'`
+`curl 'http://localhost:9000/api/registration' -X POST -d '{"registrationId":"whatever", "id":"alpha1", "userName":"John"}' -H 'Content-Type: application/json'`
 + POST /api/registration
-+ BODY `{"registrationId":"whatever", "groupId":"alpha1", "userName":"John"}`
++ BODY `{"registrationId":"whatever", "id":"alpha1", "userName":"John"}`
 
 ### get groups
 `curl 'http://localhost:9000/api/groups/all'`

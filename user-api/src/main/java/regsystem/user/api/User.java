@@ -15,11 +15,12 @@ import lombok.ToString;
 @EqualsAndHashCode
 public final class User {
 
-    public final String userId;
+    //String id contains UUID
+    public final String id;
     public final String name;
 
-    public User(String userId, String name) {
-        this.userId = Preconditions.checkNotNull(userId, "userId is null");
+    public User(String id, String name) {
+        this.id = Preconditions.checkNotNull(id, "id is null");
         this.name = Preconditions.checkNotNull(name, "name is null");
     }
 }
