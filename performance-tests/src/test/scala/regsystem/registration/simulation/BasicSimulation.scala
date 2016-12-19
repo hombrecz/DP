@@ -13,11 +13,13 @@ class BasicSimulation extends Simulation {
 
   private[this] val config = ConfigFactory.load()
 
-  private val repeatCount = config.getInt("scenario.repeat_count")
-
   private val groupCount = config.getInt("scenario.group_count")
 
   private val userCount = config.getInt("scenario.user_count")
+
+  private val userRampTime = config.getInt("scenario.user_test_time")
+
+  private val userRequestsDelay = config.getInt("user_test_delay")
 
   private val percentSuccess = config.getInt("scenario.percent_success")
 
@@ -60,7 +62,7 @@ class BasicSimulation extends Simulation {
 
   setUp(
     createGroup.inject(atOnceUsers(groupCount)),
-    registerUsers.inject(nothingFor(1 seconds), rampUsers(userCount) over (10 seconds))
+    registerUsers.inject(nothingFor(userRequestsDelay seconds), rampUsers(userCount) over (userRampTime seconds))
   )
     .protocols(httpProtocol)
     .assertions(global.successfulRequests.percent.is(percentSuccess))
