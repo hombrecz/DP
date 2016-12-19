@@ -19,7 +19,7 @@ class BasicSimulation extends Simulation {
 
   private val userRampTime = config.getInt("scenario.user_test_time")
 
-  private val userRequestsDelay = config.getInt("user_test_delay")
+  private val userRequestsDelay = config.getInt("scenario.user_test_delay")
 
   private val percentSuccess = config.getInt("scenario.percent_success")
 
