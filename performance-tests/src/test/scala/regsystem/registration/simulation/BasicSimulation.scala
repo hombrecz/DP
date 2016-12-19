@@ -7,14 +7,15 @@ import io.gatling.http.Predef._
 import net.liftweb.json.Serialization
 import regsystem.registration.data.TestDataUtils.{groups, _}
 import regsystem.registration.data.{JsonGroup, JsonUser}
-
-import scala.util.Random
+import scala.concurrent.duration._
 
 class BasicSimulation extends Simulation {
 
   private[this] val config = ConfigFactory.load()
 
   private val repeatCount = config.getInt("scenario.repeat_count")
+
+  private val groupCount = config.getInt("scenario.group_count")
 
   private val userCount = config.getInt("scenario.user_count")
 
@@ -38,7 +39,7 @@ class BasicSimulation extends Simulation {
 
   private def serializeUser(user: JsonUser) = Serialization.write(user)
 
-  val scn: ScenarioBuilder = scenario("Users registration")
+  val createGroup: ScenarioBuilder = scenario("Groups creation")
     .feed(groupFeeder.circular)
     .exec(
       http("Create group")
@@ -46,6 +47,8 @@ class BasicSimulation extends Simulation {
         .header("Content-Type", "application/json")
         .body(StringBody("${group}"))
     )
+
+  val registerUsers: ScenarioBuilder = scenario("Users registration")
     .feed(userFeeder)
     .exec(
       http("Register user")
@@ -55,7 +58,10 @@ class BasicSimulation extends Simulation {
         .check(status is 200)
     )
 
-  setUp(scn.inject(atOnceUsers(userCount)))
+  setUp(
+    createGroup.inject(atOnceUsers(groupCount)),
+    registerUsers.inject(nothingFor(1 seconds), rampUsers(userCount) over (10 seconds))
+  )
     .protocols(httpProtocol)
     .assertions(global.successfulRequests.percent.is(percentSuccess))
 }
