@@ -59,7 +59,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public ServiceCall<Group, Done> createGroup() {
         return request -> {
-            log.info("Creating group: {}.", request.name);
+            log.debug("Creating group: {}.", request.name);
             return groupEntityRef(request.id).ask(new RegistrationCommand.CreateGroup(request))
                     .thenApply(ack -> Done.getInstance());
         };
@@ -71,7 +71,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             List<Group> list = rows.stream().map(r -> {
                 Group group = new Group(r.getString("id"), r.getString("name"), r.getInt("capacity"),
                         getUsersFromList(r.getList("users", String.class)));
-                log.info("Returning group: {}", group);
+                log.debug("Returning group: {}", group);
                 return group;
             }).collect(Collectors.toList());
             return TreePVector.from(list);

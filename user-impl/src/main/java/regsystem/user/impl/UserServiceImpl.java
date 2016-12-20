@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ServiceCall<User, Done> createUser() {
         return request -> {
-            log.info("Creating user: {}.", request.name);
+            log.debug("Creating user: {}.", request.name);
             return userEntityRef(request.id).ask(new UserCommand.CreateUser(request))
                     .thenApply(ack -> Done.getInstance());
         };

@@ -83,7 +83,7 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
     private CompletionStage<Done> prepareWriteGroup() {
         return session.prepare("INSERT INTO group (id, name, capacity, users) VALUES (?, ?, ?, ?)").thenApply(ps -> {
             setWriteGroup(ps);
-            log.info("Registration write group prepared statement - OK");
+            log.debug("Registration write group prepared statement - OK");
             return Done.getInstance();
         });
     }
@@ -91,7 +91,7 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
     private CompletionStage<Done> prepareRegisterPlayerToGroup() {
         return session.prepare("UPDATE group SET capacity = ?, users = users + ? WHERE id = ?").thenApply(ps -> {
             setRegisterPlayerToGroup(ps);
-            log.info("Registration decrease capacity prepared statement - OK");
+            log.debug("Registration decrease capacity prepared statement - OK");
             return Done.getInstance();
         });
     }
@@ -99,7 +99,7 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
     private CompletionStage<Done> prepareUnregisterPlayerFromGroup() {
         return session.prepare("UPDATE group SET capacity = ?, users = users - ? WHERE id = ?").thenApply(ps -> {
             setUnregisterPlayerFromGroup(ps);
-            log.info("Registration decrease capacity prepared statement - OK");
+            log.debug("Registration decrease capacity prepared statement - OK");
             return Done.getInstance();
         });
     }
@@ -110,7 +110,7 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
         bindWriteGroup.setString("name", event.name);
         bindWriteGroup.setInt("capacity", event.capacity);
         bindWriteGroup.setList("users", event.users);
-        log.info("Persisted group {}", event.name);
+        log.debug("Persisted group {}", event.name);
         return completedStatement(bindWriteGroup);
     }
 
@@ -123,7 +123,7 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
         bindDecreaseCapacity.setString("id", event.group.id);
         bindDecreaseCapacity.setInt("capacity", decreasedCapacity);
         bindDecreaseCapacity.setList("users", registeredUsers);
-        log.info("Decreased capacity of group {} to {}, added player {}", event.group.name, decreasedCapacity, event.user.name);
+        log.debug("Decreased capacity of group {} to {}, added player {}", event.group.name, decreasedCapacity, event.user.name);
         return completedStatement(bindDecreaseCapacity);
     }
 
@@ -136,7 +136,7 @@ public class RegistrationEventProcessor extends ReadSideProcessor<RegistrationEv
         bindDecreaseCapacity.setString("id", event.group.id);
         bindDecreaseCapacity.setInt("capacity", increasedCapacity);
         bindDecreaseCapacity.setList("users", registeredUsers);
-        log.info("Increased capacity of group {} to {}, removed player {}", event.group.name, increasedCapacity, event.user.name);
+        log.debug("Increased capacity of group {} to {}, removed player {}", event.group.name, increasedCapacity, event.user.name);
         return completedStatement(bindDecreaseCapacity);
     }
 }

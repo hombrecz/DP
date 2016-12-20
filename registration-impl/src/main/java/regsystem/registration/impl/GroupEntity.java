@@ -63,7 +63,7 @@ public class GroupEntity extends PersistentEntity<RegistrationCommand, Registrat
                 (cmd, ctx) -> {
                     if (state().group.isPresent()) {
                         if (state().group.get().capacity >= 0) {
-                            log.info("Capacity of group {} is enough.", state().group.get().name);
+                            log.debug("Capacity of group {} is enough.", state().group.get().name);
                             UserAccepted event = new UserAccepted(
                                     new User(cmd.user.id, cmd.user.name), state().group.get());
                             return ctx.thenPersist(event, evt -> ctx.reply(Done.getInstance()));

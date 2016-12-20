@@ -64,7 +64,7 @@ public class UserEventProcessor extends ReadSideProcessor<UserEvent> {
     private CompletionStage<Done> prepareWriteUser() {
         return session.prepare("INSERT INTO user (id, name) VALUES (?, ?)").thenApply(ps -> {
             setWriteUser(ps);
-            log.info("User write prepared statement - OK");
+            log.debug("User write prepared statement - OK");
             return Done.getInstance();
         });
     }
@@ -73,7 +73,7 @@ public class UserEventProcessor extends ReadSideProcessor<UserEvent> {
         BoundStatement bindCreateUser = writeUser.bind();
         bindCreateUser.setString("id", event.id);
         bindCreateUser.setString("name", event.name);
-        log.info("Persisted user {}", event.name);
+        log.debug("Persisted user {}", event.name);
         return completedStatement(bindCreateUser);
     }
 
