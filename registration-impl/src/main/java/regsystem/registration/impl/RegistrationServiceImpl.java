@@ -1,10 +1,15 @@
 package regsystem.registration.impl;
 
 import com.lightbend.lagom.javadsl.api.ServiceCall;
+import com.lightbend.lagom.javadsl.api.broker.Topic;
+import com.lightbend.lagom.javadsl.broker.TopicProducer;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntityRef;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntityRegistry;
 import com.lightbend.lagom.javadsl.persistence.ReadSide;
 import com.lightbend.lagom.javadsl.persistence.cassandra.CassandraSession;
+import com.lightbend.lagom.javadsl.pubsub.PubSubRef;
+import com.lightbend.lagom.javadsl.pubsub.PubSubRegistry;
+import com.lightbend.lagom.javadsl.pubsub.TopicId;
 
 import org.pcollections.PSequence;
 import org.pcollections.TreePVector;
@@ -21,26 +26,27 @@ import javax.inject.Inject;
 
 import akka.Done;
 import akka.NotUsed;
+import akka.japi.Pair;
 import regsystem.registration.api.Group;
 import regsystem.registration.api.RegistrationService;
 import regsystem.registration.api.RegistrationTicket;
 import regsystem.user.api.User;
-import regsystem.user.api.UserService;
+
+import static regsystem.registration.impl.RegistrationEvent.UserAccepted;
 
 public class RegistrationServiceImpl implements RegistrationService {
 
+    private final Logger log = LoggerFactory.getLogger(RegistrationServiceImpl.class);
     private final PersistentEntityRegistry persistentEntityRegistry;
     private final CassandraSession db;
-    private final Logger log = LoggerFactory.getLogger(RegistrationServiceImpl.class);
-
-    private final UserService userService;
+    private final PubSubRef<RegistrationEvent.UserAccepted> publishedTopic;
 
     @Inject
     public RegistrationServiceImpl(PersistentEntityRegistry persistentEntityRegistry, ReadSide readSide,
-                                   UserService userService, CassandraSession db) {
+                                   CassandraSession db,PubSubRegistry pubSub) {
         this.persistentEntityRegistry = persistentEntityRegistry;
-        this.userService = userService;
         this.db = db;
+        this.publishedTopic = pubSub.refFor(TopicId.of(UserAccepted.class, ""));
         persistentEntityRegistry.register(GroupEntity.class);
         readSide.register(RegistrationEventProcessor.class);
     }
@@ -52,7 +58,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             User user = new User(UUID.randomUUID().toString(), request.userName);
             final CompletionStage<Done> registerToGroup = groupEntity.ask(new RegistrationCommand.RegisterUser(user));
             final CompletionStage<Done> checkCapacity = groupEntity.ask(new RegistrationCommand.CheckCapacity(user));
-            return registerToGroup.thenCompose(afterRegistration -> checkCapacity).thenCompose(checked -> userService.createUser().invoke(user));
+            return registerToGroup.thenCompose(afterRegistration -> checkCapacity);
         };
     }
 
@@ -75,6 +81,16 @@ public class RegistrationServiceImpl implements RegistrationService {
                 return group;
             }).collect(Collectors.toList());
             return TreePVector.from(list);
+        });
+    }
+
+    @Override
+    public Topic<RegistrationEvent> registeredUsersTopic() {
+        //TODO OD - in case of sharding switch to taggedStreamWithOffset
+        return TopicProducer.singleStreamWithOffset(offset -> {
+            return persistentEntityRegistry
+                    .eventStream(RegistrationEventTag.INSTANCE, offset)
+                    .map(p -> new Pair<>(p.first(), offset));
         });
     }
 

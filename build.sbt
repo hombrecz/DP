@@ -7,6 +7,7 @@ lazy val userApi = project("user-api")
   .settings(
     version := "1.0-SNAPSHOT",
     libraryDependencies ++= Seq(
+      lagomJavadslPubSub,
       lagomJavadslApi,
       "org.projectlombok" % "lombok" % "1.16.12"
     ),
@@ -15,21 +16,23 @@ lazy val userApi = project("user-api")
 
 lazy val userImpl = project("user-impl")
   .enablePlugins(LagomJava)
+  .dependsOn(userApi, registrationApi)
   .settings(
     version := "1.0-SNAPSHOT",
     libraryDependencies ++= Seq(
+      lagomJavadslPubSub,
       lagomJavadslPersistenceCassandra,
       lagomJavadslTestKit,
       "org.projectlombok" % "lombok" % "1.16.12"
     ),
     javacOptions ++= Seq("-encoding", "UTF-8")
   )
-  .dependsOn(userApi)
 
 lazy val registrationApi = project("registration-api")
-  .settings(version := "1.0-SNAPSHOT")
   .settings(
+    version := "1.0-SNAPSHOT",
     libraryDependencies ++= Seq(
+      lagomJavadslPubSub,
       lagomJavadslApi,
       "org.projectlombok" % "lombok" % "1.16.12"
     ),
@@ -37,11 +40,13 @@ lazy val registrationApi = project("registration-api")
   )
 
 lazy val registrationImpl = project("registration-impl")
-  .settings(version := "1.0-SNAPSHOT")
   .enablePlugins(LagomJava)
   .dependsOn(registrationApi, userApi)
   .settings(
+    version := "1.0-SNAPSHOT",
     libraryDependencies ++= Seq(
+      lagomJavadslPubSub,
+      lagomJavadslBroker,
       lagomJavadslPersistenceCassandra,
       lagomJavadslTestKit,
       "org.projectlombok" % "lombok" % "1.16.12"
@@ -50,13 +55,13 @@ lazy val registrationImpl = project("registration-impl")
   )
 
 lazy val performanceTests = project("performance-tests")
-  .settings(version := "1.0-SNAPSHOT")
   .enablePlugins(GatlingPlugin)
   .settings(
+    version := "1.0-SNAPSHOT",
     libraryDependencies ++= Seq(
       "net.liftweb" % "lift-json_2.10" % "2.5.1",
       "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.2.3" % "test",
-      "io.gatling"            % "gatling-test-framework"    % "2.2.3" % "test"
+      "io.gatling" % "gatling-test-framework" % "2.2.3" % "test"
     ),
     javacOptions ++= Seq("-encoding", "UTF-8")
   )
