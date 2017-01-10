@@ -17,7 +17,9 @@ class BasicSimulation extends Simulation {
 
   private val userCount = config.getInt("scenario.user_count")
 
-  private val userRampTime = config.getInt("scenario.user_test_time")
+  private val groupRampTime = config.getInt("scenario.group_test_time")
+
+  private val userRampTime = config.getInt("scenario.user_test_time") 
 
   private val userRequestsDelay = config.getInt("scenario.user_test_delay")
 
@@ -61,7 +63,7 @@ class BasicSimulation extends Simulation {
     )
 
   setUp(
-    createGroup.inject(atOnceUsers(groupCount)),
+    createGroup.inject(rampUsers(groupCount) over (groupRampTime seconds)),
     registerUsers.inject(nothingFor(userRequestsDelay seconds), rampUsers(userCount) over (userRampTime seconds))
   )
     .protocols(httpProtocol)
