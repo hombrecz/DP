@@ -70,4 +70,7 @@ lazy val jacksonParameterNamesJavacSettings = Seq(
   javacOptions in compile += "-parameters"
 )
 
+lagomCassandraEnabled in ThisBuild := false
+lagomCassandraPort in ThisBuild := 9042
+
 fork in run := true
