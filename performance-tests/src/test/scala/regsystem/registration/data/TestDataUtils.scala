@@ -26,9 +26,11 @@ object TestDataUtils {
       "Olga", "Oliver", "Penny", "Pedro", "Quinn", "Quentin", "Rachel", "Ray", "Sarah", "Sean", "Tanya", "Tim", "Uma", "Ulysses",
       "Veronica", "Vinny", "Whitney", "Wiliam", "Xena", "Xavier", "Ysabella", "Yasir", "Zoe", "Zac")
 
-  private def randomGroupName = colour(Random.nextInt(colour.length)) + " " + code(Random.nextInt(code.length)) + " " + Random.nextInt(99)
+  private def randomGroupName = java.util.UUID.randomUUID.toString
+//  private def randomGroupName = colour(Random.nextInt(colour.length)) + " " + code(Random.nextInt(code.length)) + " " + Random.nextInt(99)
 
-  private def randomUserName = names(Random.nextInt(names.length)) + " " + getRandomCapitalLetter + "."
+  private def randomUserName = java.util.UUID.randomUUID.toString
+//  private def randomUserName = names(Random.nextInt(names.length)) + " " + getRandomCapitalLetter + "."
 
   private def getRandomCapitalLetter = (Random.nextInt(90 - 65) + 65).toChar
 
